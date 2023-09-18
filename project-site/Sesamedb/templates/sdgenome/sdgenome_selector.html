@@ -1,0 +1,36 @@
+{% extends 'sdbasemodel.html' %}
+
+{% block title_block %}
+    HeZhi: The Sesame Resource Database - Genome Browser
+{% endblock %}
+
+{% block header_block %}
+    <div style="margin-top: 70px; text-align: left" class="col-sm-12">
+        <h2 style="font-family: Georgia,serif">HeZhi: The Sesame Resource Database</h2>
+        <h4 style="font-family: Georgia,serif">Genome selector</h4>
+    </div>
+{% endblock %}
+
+{% block content_block %}
+    {% load static %}
+    <div class="container">
+        <div class='row'><div class="col-md-12"><div class="panel panel-default"><div class="panel-body">
+            <h3 class="text-left">Genome catalog <small>Linear view for the assembled two sesame genomes</small></h3>
+            <HR SIZE = 3>
+
+            <h5 class="text-left"><i>Sesamum indicium</i> WH153 (white sesame)</h5>
+            <a href="{% url 'sd_genome_selector' %}?id=wh153">Sesamum indicium WH153 genome</a>
+            <span class="label label-success">Chromosome Level</span>
+            <br><br><br>
+            <h5 class="text-left"><i>Sesamum indicium</i> BL123 (black sesame)</h5>
+            <a href="{% url 'sd_genome_selector' %}?id=bl123">Sesamum indicium BL123 genome</a>
+            <span class="label label-success">Chromosome Level</span>
+
+            <br><br><br>
+            <h3 class="text-left">Genome assembly and annotation pipelines</h3>
+            <HR SIZE = 3>
+            <img src="{% static 'sdAllPageStatic/genome_asm_annot_pipeline.png' %}"
+             class="img-thumbnail" alt="Cinque Terre" style="scale: 85%; margin-top: -50px">
+        </div></div></div></div>
+    </div>
+{% endblock %}

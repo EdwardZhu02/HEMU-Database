@@ -1,0 +1,99 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Page Title-->
+    <link rel="shortcut icon" href="{% static "favicon.ico" %}" />
+    <title>
+        {% block title_block %}{% endblock %}
+    </title>
+
+    <!--External CSS styles-->
+    {% block style_block %}{% endblock %}
+    <link rel='stylesheet' href='{% static 'Bootstrap-3.4.1/css/default-bootstrap.min.css' %}'>
+    <link rel='stylesheet' href='{% static 'CSS/heiho-modified.css' %}' />
+    <link rel="stylesheet" href={% static 'CSS/loader-main.css' %}>
+</head>
+<body>
+    <!--Navigation Bar-->
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" style="transform: scale(1.1)" href={% url 'sd_home_page' %}>HeZhi</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse" aria-expanded="false" style="height: 1px;">
+          <ul class="nav navbar-nav">
+            <li><a href={% url 'sd_home_page' %}>Home</a></li>
+            <li><a href={% url 'sd_genome_selector' %}>Genome</a></li>
+            <li><a href='#'>Structural Variation</a></li>
+            <li><a href='#'>Population</a></li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+
+    <!--Page Header Row-->
+    <div class="container">
+        <div class="page-header">
+            <div class='row'>
+                {% block header_block %}{% endblock %}
+            </div>
+        </div>
+    </div>
+
+    <!--Main Page Content-->
+    {% block content_block %}{% endblock %}
+
+    <!--Subsidiary Page Content-->
+    {% block aux_block1 %}{% endblock %}
+    {% block aux_block2 %}{% endblock %}
+
+    <!--External Javascript-->
+    {% block javascript_block %}{% endblock %}
+    <script type='text/javascript' src='{% static 'JS/jquery-1.12.4.min.js' %}'></script>
+    <script type='text/javascript' src='{% static 'Bootstrap-3.4.1/js/bootstrap.min.js' %}'></script>
+    <script type='text/javascript' src='{% static 'JS/papaparse.min.js' %}'></script>
+    <script type='text/javascript' src='{% static 'JS/heiho.js' %}'></script>
+    <script type='text/javascript' src='{% static 'JS/echarts.min.js' %}'></script>
+
+    <!--Subsidiary Page Content-->
+    {% block footer_script_block %}{% endblock %}
+
+    <!--Global Footer-->
+    <footer class="container-fluid">
+        <footer class="footer">
+            <div class="container">
+                <br><br>
+                <HR style= "width: 100%" SIZE = 3>
+                <address>
+                    <span class="glyphicon glyphicon-wrench"></span>
+                    <strong>Edward Zhu</strong> <small>(Chief developer & site maintainer)</small><br>
+                    <a href="mailto:edwardmashed@gmail.com">edwardmashed@gmail.com</a>
+                </address>
+                <address>
+                    <strong>School of Agriculture, Sun Yat-sen University</strong><br>
+                    No.66, Gongchang Road, Guangming District, Shenzhen, Guangdong<br>
+                    518107, P.R.China<br>
+                </address>
+                <!--<div><a href="https://beian.miit.gov.cn/" target=_blank>粤ICP备2023017307号</a></div>-->
+                <strong>Our other projects</strong><br>
+                <a href="{% url 'home_page' %}">The HEMU Andropogoneae database</a><br>
+                <br><br><br>
+            </div>
+        </footer>
+    </footer>
+
+</body>
+</html>

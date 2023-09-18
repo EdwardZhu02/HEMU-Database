@@ -1,0 +1,46 @@
+{% extends 'sdbasemodel.html' %}
+
+{% block title_block %}
+    HeZhi: The Sesame Resource Database - Genome Browser
+{% endblock %}
+
+{% block header_block %}
+    <div style="margin-top: 70px; text-align: center" class="col-sm-12">
+        <h4>Genome browser: {{ sp_identifier }}</h4>
+    </div>
+{% endblock %}
+
+{% block content_block %}
+    {% load static %}
+    <div class="container">
+        <div class='row'><div class="col-md-12">
+            <div style="text-align: center">
+                <a class="btn btn-default" href="{% url 'sd_genome_selector' %}">
+                    <span class="glyphicon glyphicon-backward"></span>
+                    Back to genome selector
+                </a>
+                <a class="btn btn-primary" href="https://shijunpenglab.com/jbrowse?config=jbrowse_resources%2Fhezhi%2F{{ sp_identifier }}%2Fconfig.json">
+                    <span class="glyphicon glyphicon-fullscreen"></span>
+                    Go fullscreen
+                </a>
+                <br><br>
+                <hr>
+            </div>
+        </div></div>
+        <iframe src="https://shijunpenglab.com/jbrowse?config=jbrowse_resources%2Fhezhi%2F{{ sp_identifier }}%2Fconfig.json"
+                                        id="flex_iframe" width="100%" height="1000px"
+                                        name="topFrame" frameborder="0"></iframe>
+    </div>
+
+{% endblock %}
+
+{% block javascript_block %}
+    <script>
+    // Adjust iframe size for full display
+    function adjustIframe() {
+        var ifm = document.getElementById("flex_iframe");
+        ifm.height = document.documentElement.clientHeight;
+        ifm.width = document.documentElement.clientWidth;
+    }
+    </script>
+{% endblock %}
