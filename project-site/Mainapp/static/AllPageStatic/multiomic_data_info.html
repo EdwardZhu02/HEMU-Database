@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html style="height: 100%">
+<head>
+    <meta charset="utf-8">
+</head>
+<body style="height: 100%; margin: 0">
+<div id="container" style="height: 100%"></div>
+
+<script type="text/javascript" src="/static/JS/echarts.min.js"></script>
+<!--<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>-->
+<!-- Uncomment this line if you want to dataTool extension
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5/dist/extension/dataTool.min.js"></script>
+-->
+<!-- Uncomment this line if you want to use gl extension
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts-gl@2/dist/echarts-gl.min.js"></script>
+-->
+<!-- Uncomment this line if you want to echarts-stat extension
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts-stat@latest/dist/ecStat.min.js"></script>
+-->
+<!-- Uncomment this line if you want to use map
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5/map/js/china.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5/map/js/world.js"></script>
+-->
+<!-- Uncomment these two lines if you want to use bmap extension
+<script type="text/javascript" src="https://api.map.baidu.com/api?v=2.0&ak=<Your Key Here>"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5/dist/extension/bmap.min.js"></script>
+-->
+<script type="text/javascript">
+    var dom = document.getElementById("container");
+    var myChart = echarts.init(dom);
+    var app = {};
+    myChart.showLoading();
+    var data = {
+        "nodes": [{"name": "meiocyte"}, {"name": "leaf mesophyll"}, {"name": "mixed"}, {"name": "tassel"}, {"name": "no_label"}, {"name": "leaf"}, {"name": "xylem sap"}, {"name": "seedling"}, {"name": "cob"}, {"name": "chasmogamous-inflorescence"}, {"name": "anther"}, {"name": "Miscanthus floridulus"}, {"name": "endosperm"}, {"name": "flower"}, {"name": "ear"}, {"name": "ligule"}, {"name": "ovary"}, {"name": "Pedicellate Spikelet"}, {"name": "kernel"}, {"name": "miRNA-seq"}, {"name": "Saccharum"}, {"name": "leaf protoplast"}, {"name": "meristem"}, {"name": "male gametophyte"}, {"name": "seed"}, {"name": "young seedling"}, {"name": "ChIP-seq"}, {"name": "growing_point_base"}, {"name": "culm"}, {"name": "shoot"}, {"name": "Coix"}, {"name": "stalk"}, {"name": "glume"}, {"name": "Bract"}, {"name": "meiocytes"}, {"name": "Miscanthus lutarioriparius"}, {"name": "tassel primordia"}, {"name": "embryo"}, {"name": "tillering node"}, {"name": "stem"}, {"name": "peduncle"}, {"name": "internode"}, {"name": "sheath"}, {"name": "BS cell"}, {"name": "male flower"}, {"name": "RNA-seq"}, {"name": "bud"}, {"name": "Sorghum"}, {"name": "Microstegium vimineum"}, {"name": "Themeda triandra"}, {"name": "silk"}, {"name": "M cell"}, {"name": "cleistogamous-inflorescence"}, {"name": "Awn"}, {"name": "blade"}, {"name": "Sessile Spikelet"}, {"name": "aerial tissue"}, {"name": "ATAC-seq"}, {"name": "pericarp"}, {"name": "bundle sheath"}, {"name": "Miscanthus sacchariflorus"}, {"name": "Zea mays"}, {"name": "panicle primordia"}, {"name": "root"}, {"name": "callus"}],
+        "links": [{"source":"RNA-seq","target":"Zea mays","value":1549},{"source":"RNA-seq","target":"Sorghum","value":1415},{"source":"RNA-seq","target":"Saccharum","value":1226},{"source":"RNA-seq","target":"Coix","value":113},{"source":"RNA-seq","target":"Miscanthus floridulus","value":24},{"source":"RNA-seq","target":"Miscanthus lutarioriparius","value":339},{"source":"RNA-seq","target":"Miscanthus sacchariflorus","value":56},{"source":"RNA-seq","target":"Themeda triandra","value":12},{"source":"RNA-seq","target":"Microstegium vimineum","value":13},{"source":"ChIP-seq","target":"Zea mays","value":1063},{"source":"ChIP-seq","target":"Sorghum","value":17},{"source":"ChIP-seq","target":"Saccharum","value":2},{"source":"ATAC-seq","target":"Zea mays","value":156},{"source":"ATAC-seq","target":"Sorghum","value":7},{"source":"miRNA-seq","target":"Zea mays","value":782},{"source":"miRNA-seq","target":"Sorghum","value":59},{"source":"Zea mays","target":"anther","value":9},{"source":"Zea mays","target":"blade","value":45},{"source":"Zea mays","target":"ear","value":38},{"source":"Zea mays","target":"embryo","value":14},{"source":"Zea mays","target":"endosperm","value":18},{"source":"Zea mays","target":"leaf","value":235},{"source":"Zea mays","target":"ligule","value":30},{"source":"Zea mays","target":"mixed","value":592},{"source":"Zea mays","target":"no_label","value":7},{"source":"Zea mays","target":"pericarp","value":18},{"source":"Zea mays","target":"root","value":225},{"source":"Zea mays","target":"seed","value":259},{"source":"Zea mays","target":"sheath","value":36},{"source":"Zea mays","target":"shoot","value":17},{"source":"Zea mays","target":"tassel","value":6},{"source":"Sorghum","target":"bud","value":37},{"source":"Sorghum","target":"flower","value":3},{"source":"Sorghum","target":"growing_point_base","value":24},{"source":"Sorghum","target":"internode","value":53},{"source":"Sorghum","target":"leaf","value":324},{"source":"Sorghum","target":"male gametophyte","value":8},{"source":"Sorghum","target":"meristem","value":51},{"source":"Sorghum","target":"mixed","value":37},{"source":"Sorghum","target":"no_label","value":324},{"source":"Sorghum","target":"panicle primordia","value":46},{"source":"Sorghum","target":"peduncle","value":127},{"source":"Sorghum","target":"pericarp","value":26},{"source":"Sorghum","target":"root","value":185},{"source":"Sorghum","target":"seed","value":17},{"source":"Sorghum","target":"seedling","value":51},{"source":"Sorghum","target":"shoot","value":35},{"source":"Sorghum","target":"stalk","value":25},{"source":"Sorghum","target":"stem","value":42},{"source":"Saccharum","target":"bud","value":13},{"source":"Saccharum","target":"callus","value":16},{"source":"Saccharum","target":"culm","value":22},{"source":"Saccharum","target":"internode","value":198},{"source":"Saccharum","target":"leaf","value":699},{"source":"Saccharum","target":"mixed","value":45},{"source":"Saccharum","target":"no_label","value":77},{"source":"Saccharum","target":"root","value":42},{"source":"Saccharum","target":"shoot","value":44},{"source":"Saccharum","target":"stalk","value":25},{"source":"Saccharum","target":"stem","value":36},{"source":"Saccharum","target":"tillering node","value":9},{"source":"Coix","target":"glume","value":3},{"source":"Coix","target":"leaf","value":60},{"source":"Coix","target":"male flower","value":3},{"source":"Coix","target":"mixed","value":26},{"source":"Coix","target":"root","value":6},{"source":"Coix","target":"seed","value":11},{"source":"Coix","target":"shoot","value":3},{"source":"Coix","target":"stem","value":1},{"source":"Miscanthus lutarioriparius","target":"bud","value":2},{"source":"Miscanthus lutarioriparius","target":"internode","value":3},{"source":"Miscanthus lutarioriparius","target":"leaf","value":167},{"source":"Miscanthus lutarioriparius","target":"mixed","value":16},{"source":"Miscanthus lutarioriparius","target":"no_label","value":89},{"source":"Miscanthus lutarioriparius","target":"root","value":37},{"source":"Miscanthus lutarioriparius","target":"stem","value":25},{"source":"Miscanthus floridulus","target":"leaf","value":24},{"source":"Miscanthus sacchariflorus","target":"blade","value":4},{"source":"Miscanthus sacchariflorus","target":"leaf","value":9},{"source":"Miscanthus sacchariflorus","target":"mixed","value":9},{"source":"Miscanthus sacchariflorus","target":"no_label","value":27},{"source":"Miscanthus sacchariflorus","target":"root","value":5},{"source":"Miscanthus sacchariflorus","target":"stem","value":2},{"source":"Microstegium vimineum","target":"chasmogamous-inflorescence","value":3},{"source":"Microstegium vimineum","target":"cleistogamous-inflorescence","value":3},{"source":"Microstegium vimineum","target":"leaf","value":3},{"source":"Microstegium vimineum","target":"no_label","value":1},{"source":"Microstegium vimineum","target":"root","value":3},{"source":"Themeda triandra","target":"Pedicellate Spikelet","value":3},{"source":"Themeda triandra","target":"Sessile Spikelet","value":3},{"source":"Themeda triandra","target":"Bract","value":3},{"source":"Themeda triandra","target":"Awn","value":3},{"source":"Saccharum","target":"no_label","value":2},{"source":"Sorghum","target":"leaf mesophyll","value":5},{"source":"Sorghum","target":"no_label","value":2},{"source":"Sorghum","target":"aerial tissue","value":2},{"source":"Sorghum","target":"leaf","value":8},{"source":"Zea mays","target":"anther","value":11},{"source":"Zea mays","target":"BS cell","value":4},{"source":"Zea mays","target":"bundle sheath","value":3},{"source":"Zea mays","target":"ear","value":81},{"source":"Zea mays","target":"endosperm","value":22},{"source":"Zea mays","target":"flower","value":7},{"source":"Zea mays","target":"kernel","value":6},{"source":"Zea mays","target":"leaf","value":176},{"source":"Zea mays","target":"leaf protoplast","value":228},{"source":"Zea mays","target":"M cell","value":4},{"source":"Zea mays","target":"meristem","value":4},{"source":"Zea mays","target":"pericarp","value":4},{"source":"Zea mays","target":"root","value":87},{"source":"Zea mays","target":"seedling","value":170},{"source":"Zea mays","target":"shoot","value":30},{"source":"Zea mays","target":"tassel","value":24},{"source":"Zea mays","target":"mixed","value":44},{"source":"Zea mays","target":"seed","value":22},{"source":"Zea mays","target":"bud","value":4},{"source":"Zea mays","target":"embryo","value":26},{"source":"Zea mays","target":"no_label","value":98},{"source":"Zea mays","target":"meiocyte","value":8},{"source":"Zea mays","target":"ear","value":5},{"source":"Zea mays","target":"leaf","value":19},{"source":"Zea mays","target":"leaf mesophyll","value":2},{"source":"Zea mays","target":"no_label","value":9},{"source":"Zea mays","target":"root","value":2},{"source":"Zea mays","target":"seedling","value":117},{"source":"Zea mays","target":"tassel","value":2},{"source":"Sorghum","target":"leaf","value":3},{"source":"Sorghum","target":"young seedling","value":4},{"source":"Sorghum","target":"leaf","value":3},{"source":"Sorghum","target":"mixed","value":3},{"source":"Sorghum","target":"no_label","value":5},{"source":"Sorghum","target":"root","value":24},{"source":"Sorghum","target":"seed","value":6},{"source":"Sorghum","target":"shoot","value":5},{"source":"Sorghum","target":"stem","value":8},{"source":"Zea mays","target":"anther","value":3},{"source":"Zea mays","target":"callus","value":3},{"source":"Zea mays","target":"cob","value":3},{"source":"Zea mays","target":"ear","value":54},{"source":"Zea mays","target":"embryo","value":27},{"source":"Zea mays","target":"endosperm","value":36},{"source":"Zea mays","target":"leaf","value":228},{"source":"Zea mays","target":"meiocytes","value":2},{"source":"Zea mays","target":"mixed","value":2},{"source":"Zea mays","target":"no_label","value":35},{"source":"Zea mays","target":"ovary","value":4},{"source":"Zea mays","target":"pericarp","value":18},{"source":"Zea mays","target":"root","value":77},{"source":"Zea mays","target":"seed","value":39},{"source":"Zea mays","target":"seedling","value":189},{"source":"Zea mays","target":"sheath","value":2},{"source":"Zea mays","target":"shoot","value":3},{"source":"Zea mays","target":"silk","value":12},{"source":"Zea mays","target":"stalk","value":8},{"source":"Zea mays","target":"tassel","value":28},{"source":"Zea mays","target":"tassel primordia","value":6},{"source":"Zea mays","target":"xylem sap","value":3}],
+        "title": ' '
+    }
+    var option = {
+        title: {
+            text: data.title
+        },
+        tooltip: {
+            trigger: 'item',
+            triggerOn: 'mousemove'
+        },
+        series: [
+            {
+                type: 'sankey',
+                data: data.nodes,
+                links: data.links,
+                emphasis: {
+                    focus: 'adjacency'
+                },
+                lineStyle: {
+                    color: 'gradient',
+                    curveness: 0.5
+                }
+            }
+        ]
+    };
+    myChart.hideLoading();
+    myChart.setOption(option);
+    if (option && typeof option === 'object') {
+        myChart.setOption(option);
+    }
+</script>
+</body>
+</html>
+

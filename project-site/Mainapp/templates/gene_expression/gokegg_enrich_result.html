@@ -1,0 +1,68 @@
+{% extends 'basemodel.html' %}
+
+{% block title_block %}
+    GO/KEGG Enrichment - HEMU
+{% endblock %}
+
+{% block header_block %}
+    {% load static %}
+    <div class="col-sm-2">
+        <div style="margin-top: 10px; margin-left: -5px">
+            <img src="{% static "AllPageStatic/HEMU_logo_crop.png" %}" class="img-responsive" alt="Responsive image" style="width: 72px; height: 104px">
+        </div>
+    </div>
+    <div class="col-sm-10">
+        <h2 style="margin-top: 20px; margin-left: -70px">GO/KEGG Enrichment</h2>
+        <p style="color: #8e8e8e; margin-left: -65px">Search functional annotation information of gene transcripts <br>in representative Andropogoneae species.</p>
+    </div>
+{% endblock %}
+
+{% block content_block %}
+    <div class="container">
+        <div class='row'><div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading" style="text-align: center">Gene GO/KEGG Enrichment: Result</div>
+                    <div class="panel-body">
+                        <div class="text-center">
+                            <br><br>
+                            <p><strong>Figure 1: </strong>Enrichment Bubble Plot (Interactive)</p>
+                            <iframe src="{% static 'Temp_R_gokegg/' %}{{ filename_id }}_enrichment.html"
+                                width="900px" height= "500px" name="topFrame" frameborder="0"></iframe>
+                            <br>
+                            <a href="{% static 'Temp_R_gokegg/' %}{{ filename_id }}_enrichment.png" class="btn btn-default">
+                                <span class="glyphicon glyphicon-download"></span>
+                                Download static image (.png)
+                            </a>
+                            <br><br>
+                            <hr>
+                            <br>
+                            <p><strong>Table 1: </strong>Detailed Table of Enrichment Analysis</p>
+                            <br>
+                            <a href="javascript:previewCSV('{% static 'Temp_R_gokegg/' %}{{ filename_id }}_enrichment.csv')" class="btn btn-info" style="height: 45px">
+                                <span class="glyphicon glyphicon-file"></span>
+                                Preview table online
+                            </a>
+                            <a href="{% static 'Temp_R_gokegg/' %}{{ filename_id }}_enrichment.csv" class="btn btn-default">
+                                <span class="glyphicon glyphicon-download"></span>
+                                Download full table (.csv)
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascript_block %}
+    <script>
+    function previewCSV(path_to_CSV){
+        Papa.parse(path_to_CSV, {
+            download: true,
+            complete: function(results) {
+                Heiho(results.data);
+            }
+        });
+    }
+    </script>
+{% endblock %}

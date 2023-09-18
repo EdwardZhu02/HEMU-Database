@@ -1,0 +1,35 @@
+{% extends 'basemodel.html' %}
+
+{% block title_block %}
+    Site Manager - HEMU
+{% endblock %}
+
+{% block header_block %}
+    <p> </p>
+{% endblock %}
+
+{% block content_block %}
+    <div class="container">
+        <div class='row'>
+            <div class="col-md-4"></div>
+            <div class="col-md-4">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div style="text-align: center">
+                            <form method="post">
+                                {% csrf_token %}
+                                <div class="input-group" style="margin: 0 90px;">
+                                    <input type="password" name="password" placeholder="admin password" class="form-control">
+                                </div>
+                                <br>
+                                <input type="submit" value="Authenticate" class="btn btn-primary">
+                            </form>
+                            <p style="color: darkred"><strong>{{ error_message }}</strong></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4"></div>
+        </div>
+    </div>
+{% endblock %}

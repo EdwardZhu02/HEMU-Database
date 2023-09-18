@@ -1,0 +1,47 @@
+{% extends 'basemodel.html' %}
+
+{% block title_block %}
+    Gene Sequence - HEMU
+{% endblock %}
+
+{% block header_block %}
+    {% load static %}
+    <div class="col-sm-2">
+        <div style="margin-top: 10px; margin-left: -5px">
+            <img src="{% static "AllPageStatic/HEMU_logo_crop.png" %}" class="img-responsive" alt="Responsive image" style="width: 72px; height: 104px">
+        </div>
+    </div>
+    <div class="col-sm-10">
+        <h2 style="margin-top: 20px; margin-left: -70px">Gene Expression Profiles</h2>
+        <p style="color: #8e8e8e; margin-left: -65px">Search gene expression data regarding <br>representative Andropogoneae species.</p>
+    </div>
+{% endblock %}
+
+{% block content_block %}
+    {% load static %}
+    <div class='container'><div class='row'>
+        <div class="col-md-1"></div>
+        <div class="col-md-10">
+            <div class="panel panel-default"><div class="panel-body">
+                <a href="{% url 'gene_expression' %}" class="btn btn-default">Go Back</a>
+                <br>
+                <hr>
+                {% for indv_sequence in sequence_list %}
+                    <p class="lead">Transcript: {{ indv_sequence.0 }}</p>
+                    <p>Length: {{ indv_sequence.2 }} bp</p>
+                    <pre class="pre-scrollable" style="width: 80%; word-break:normal; white-space:pre-wrap; word-wrap:break-word">{{ indv_sequence.1 }}</pre>
+                    <!--<span style="width: 80%; word-break:normal; white-space:pre-wrap; word-wrap:break-word"></span>-->
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="sequence_raw" value=">{{ indv_sequence.0 }}
+{{ indv_sequence.1 }}">
+                        <input type="submit" value="BLAST Sequence">
+                    </form>
+                    <hr>
+
+                {% endfor %}
+            </div></div>
+        </div>
+        <div class="col-md-1"></div>
+    </div></div>
+{% endblock %}

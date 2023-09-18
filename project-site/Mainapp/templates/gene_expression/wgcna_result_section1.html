@@ -1,0 +1,66 @@
+{% extends 'basemodel.html' %}
+
+{% block title_block %}
+    Weighted Gene Co-expression Network Analysis - HEMU
+{% endblock %}
+
+{% block header_block %}
+    {% load static %}
+    <div class="col-sm-2">
+        <div style="margin-top: 10px; margin-left: -5px">
+            <img src="{% static "AllPageStatic/HEMU_logo_crop.png" %}" class="img-responsive" alt="Responsive image" style="width: 72px; height: 104px">
+        </div>
+    </div>
+    <div class="col-sm-10">
+        <h2 style="margin-top: 20px; margin-left: -70px">WGCNA Module <small>Weighted Gene Co-expression Network Analysis</small></h2>
+        <p style="color: #8e8e8e; margin-left: -65px">Follow handy settings and generate a highly-customizable WGCNA report
+            <br>in representative Andropogoneae species.</p>
+    </div>
+{% endblock %}
+
+{% block content_block %}
+    <div class='container'><div class='row'><div class="col-md-12">
+        <div class="panel panel-default"><!--Section 1-->
+            <div class="panel-heading" style="text-align: center">WGCNA - Section 1: Result [{{ result_folder_name }}]</div>
+            <div class="panel-body"><div class="text-center">
+                <br>
+                <h4>Project ID: <strong style="color: darkred">{{ result_folder_name }}</strong></h4>
+                <br><br>
+                <p><strong>Figure 1: </strong>Sample cluster dendrogram</p>
+                <img src="{% static 'Temp_R_wgcna/' %}{{ result_folder_name }}/step1-sample-dendro.png"
+                                class="img-thumbnail" alt="Cinque Terre" width="500px" height="500px">
+                <br><br>
+                <p><strong>Figure 2: </strong>Scale independence and mean connectivity plot</p>
+                <img src="{% static 'Temp_R_wgcna/' %}{{ result_folder_name }}/step1-sft.png"
+                                class="img-thumbnail" alt="Cinque Terre" width="700px" height="350px">
+                <br><br>
+                <p><strong>Table 1: </strong>Detailed Table of SFT model fitness and connectivity</p>
+                <br>
+                <a href="javascript:previewCSV('{% static 'Temp_R_wgcna/' %}{{ result_folder_name }}/step1-sft-data.csv')" class="btn btn-info" style="height: 45px">
+                    <span class="glyphicon glyphicon-file"></span>
+                    Preview table online
+                </a>
+                <a href="{% static 'Temp_R_wgcna/' %}{{ result_folder_name }}/step1-sft-data.csv" class="btn btn-default">
+                    <span class="glyphicon glyphicon-download"></span>
+                    Download full table (.csv)
+                </a>
+                <br><br>
+                <p><strong>Program log file: </strong>Overview of gene filtration result and recommended SFT model power threshold</p>
+                <iframe src="{% static 'Temp_R_wgcna/' %}{{ result_folder_name }}/step1-log.txt" frameborder="1" width="400px"></iframe>
+            </div></div>
+        </div>
+    </div></div></div>
+{% endblock %}
+
+{% block javascript_block %}
+    <script>
+    function previewCSV(path_to_CSV){
+        Papa.parse(path_to_CSV, {
+            download: true,
+            complete: function(results) {
+                Heiho(results.data);
+            }
+        });
+    }
+    </script>
+{% endblock %}

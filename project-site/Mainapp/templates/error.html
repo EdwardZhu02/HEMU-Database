@@ -1,0 +1,41 @@
+{% extends 'basemodel.html' %}
+
+{% block title_block %}
+    Exception - HEMU
+{% endblock %}
+
+{% block header_block %}
+    {% load static %}
+    <div class="col-sm-2">
+        <div style="margin-top: 10px; margin-left: -5px">
+            <img src="{% static "AllPageStatic/HEMU_logo_crop.png" %}" class="img-responsive" alt="Responsive image" style="width: 72px; height: 104px">
+        </div>
+    </div>
+    <div class="col-sm-10">
+        <h2 style="margin-top: 20px; margin-left: -70px">EXCEPTION FROM SERVER</h2>
+        <p style="color: #8e8e8e; margin-left: -65px">Backend: Django & Celery task queue</p>
+    </div>
+{% endblock %}
+
+{% block content_block %}
+    <div class="container">
+        <div class='row'>
+            <div class="col-md-12"><div class="panel panel-default"><div class="panel-body">
+                <div style="text-align: left">
+                    <p>When our <strong>server backend raises an exception event</strong>, this page will appear. This could be caused by a possible system bug.<br></p>
+                    <p>If you believed this is caused by a system BUG, it is kindly requested that you let us know your usage information so that we can address the bug quickly!<br></p>
+
+                    <br>
+                    <p>--ERROR DETAIL--<br></p>
+                    <h4 style="color: darkred"><strong>{{ error_message }}</strong></h4>
+                    <p>{{ error_description }}</p>
+                    <br>
+                    <br>
+                    <p>We're here to help if you have any questions or concerns!</p>
+                    <a class="btn btn-primary" href="mailto:edwardmashed@gmail.com">Report a potential bug to us (e-mail)</a>
+                    <a class="btn btn-default" href={% url 'home_page' %}>Back to home page</a>
+                </div>
+            </div></div></div>
+        </div>
+    </div>
+{% endblock %}

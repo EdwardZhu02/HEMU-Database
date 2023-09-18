@@ -1,0 +1,117 @@
+{% extends 'basemodel.html' %}
+
+{% block title_block %}
+    Tasks On Hold - HEMU
+{% endblock %}
+
+{% block header_block %}
+    {% load static %}
+    <div class="col-sm-2">
+        <div style="margin-top: 10px; margin-left: -5px">
+            <img src="{% static "AllPageStatic/HEMU_logo_crop.png" %}" class="img-responsive" alt="Responsive image" style="width: 72px; height: 104px">
+        </div>
+    </div>
+    <div class="col-sm-10">
+        <h2 style="margin-top: 20px; margin-left: -70px">ASYNC TASK ON-HOLD</h2>
+        <p style="color: #8e8e8e; margin-left: -65px">Backend: Django & Celery task queue</p>
+    </div>
+{% endblock %}
+
+{% block content_block %}
+    <div class="container">
+        <div class='row'>
+            <div class="col-md-12"><div class="panel panel-default"><div class="panel-body">
+                <div class="center-block">
+                    <h4>A task has been submitted to the queue.</h4>
+                    <p>Unique task ID:</p>
+                    <div id="div_task_id" style="color: darkred;">{{ task_id }}</div>
+                    <br>
+                    <p>This page sends an AJAX request to the server backend every 5 seconds to check if the given task
+                        is completed. If yes, you will be automatically redirect to the task result page.</p>
+                    <p>It is advised to bookmark the page and come back later if the estimated task time consumption is high.</p>
+                    <div id="div_main_loader" class="loader" style="display: none"></div>
+                </div>
+            </div></div></div>
+        </div>
+    </div>
+{% endblock %}
+{% block footer_script_block %}
+    <script>
+    // Set up django CSRF verification mechanism
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // Set up django CSRF verification mechanism
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+
+    // Set up AJAX
+    $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            const csrftoken = getCookie('csrftoken');
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    })
+
+    // Evaluate if a pending task is to be submitted
+    var task_id_global = undefined
+
+    $(window).on('load', function (){
+        var loader_div = document.getElementById('div_main_loader')
+        // loader_div.style.display = 'none'
+        var taskId = $("#div_task_id").html()
+        if(taskId == null || taskId.length === 0){
+            // no task pending
+        }else {
+            // task executing
+            console.log("Task " + taskId)
+            task_id_global = taskId
+            loader_div.style.display = 'block'
+            loop_get_taskstatus()
+        }
+    })
+
+    function loop_get_taskstatus() {
+        var taskId = task_id_global
+        //Send GET AJAX request every 5 seconds, querying for task status.
+        //Only time-consuming tasks use this page, so the query interval is relatively long.
+        setTimeout(loop_get_taskstatus,5*1000)
+
+        $.ajax({
+            url: '{% url 'async_progress_query' %}?taskid=' + taskId,
+            type: 'get',
+            dataType: 'json',
+            success: function (json_data) {
+                var taskResult = eval(json_data)
+                var taskStatus = taskResult['state']
+                // console.log(taskStatus)
+
+                // Example: /HEMUdb/asynctasks/status
+                if(taskStatus === 'SUCCESS') {
+                    location.href='{{ redirect_url }}?success=1&taskid=' + taskId
+                }
+                if(taskStatus === 'FAILURE') {
+                    location.href='{{ redirect_url }}?success=0&taskid=' + taskId
+                }
+            }
+        })
+    }
+    </script>
+{% endblock %}

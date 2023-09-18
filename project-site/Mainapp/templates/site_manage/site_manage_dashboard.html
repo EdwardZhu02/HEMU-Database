@@ -1,0 +1,30 @@
+{% extends 'basemodel.html' %}
+
+{% block title_block %}
+    Site Manager - HEMU
+{% endblock %}
+
+{% block header_block %}
+    <h2>Site Manager - Dashboard</h2>
+{% endblock %}
+
+{% block content_block %}
+    {% load static %}
+    <div class="container">
+        <div class='row'>
+            <div class="col-md-4"><div class="panel panel-default"><div class="panel-body">
+                <div style="text-align: center">
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="clear_tmp_files" class="form-control" value="1">
+                        <button name="clear_tmp_files_btn">Clear temp files (static plots, interactive plots, etc.)</button>
+                    </form>
+                    <p style="color: darkred"><strong>{{ clear_tmp_files_message }}</strong></p>
+                </div>
+            </div></div></div>
+            <div class="col-md-4"><div class="panel panel-default"><div class="panel-body">
+                <a href="{% url 'async_test' %}">Celery testing page</a>
+            </div></div></div>
+        </div>
+    </div>
+{% endblock %}

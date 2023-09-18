@@ -1,0 +1,63 @@
+{% extends 'basemodel.html' %}
+
+{% block title_block %}
+    Gene family identification - HEMU
+{% endblock %}
+
+{% block header_block %}
+    {% load static %}
+    <div class="col-sm-2">
+        <div style="margin-top: 10px; margin-left: -5px">
+            <img src="{% static "AllPageStatic/HEMU_logo_crop.png" %}" class="img-responsive" alt="Responsive image" style="width: 72px; height: 104px">
+        </div>
+    </div>
+    <div class="col-sm-10">
+        <h2 style="margin-top: 20px; margin-left: -70px">Gene Family Identification (BLAST-P)</h2>
+        <p style="color: #8e8e8e; margin-left: -65px">Identify members of putative gene families using BLAST-based
+            <br>prediction strategies from proteins of Andropogoneae species</p>
+    </div>
+{% endblock %}
+
+{% block content_block %}
+    {% load static %}
+    <div class="container"><div class='row'><div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading" style="text-align: center">Gene family analysis toolkit: <strong>BLASTP-based family identification</strong></div>
+            <div class="panel-body">
+                <br>
+                <div style="text-align: center">
+                    <p>BLASTP-based gene family member identification can be performed directly using the <strong>HEMU BLAST module</strong>.</p>
+                    <p>Below are instructions on <strong><b style="color: darkred">curating reference protein sequence</b> and <b style="color: darkred">performing the BLASTP search</b></strong>.</p>
+                </div>
+                <br>
+                <hr>
+                <h4><strong>Step1:</strong> obtain protein reference sequence (RefSeq)</h4>
+                <br>
+                <p>First, one should obtain representative sequence from a protein family for member identification in other species.
+                    <br>Reference sequence can be <strong>curated manually, or downloaded from a publicly-available RefSeq database.</strong></p>
+                <div style="text-align: left">
+                    <a role="button" data-toggle="collapse" href="#collapseHmmList" aria-expanded="true" aria-controls="collapseHmmList">
+                        <p><strong><span class="glyphicon glyphicon-menu-down"></span>
+                            Guide for downloading RefSeq from the NCBI database</strong></p>
+                    </a>
+                    <div class="collapse" id="collapseHmmList">
+                        <br>
+                        <div style="text-align: center">Database link: <a href="https://www.ncbi.nlm.nih.gov/protein"><strong>here</strong></a></div>
+                        <div style="text-align: center; margin: -350px">
+                            <img src="{% static 'AllPageStatic/genefamily/blastp_refseq_fetch_guide.png' %}"
+                                    class="img-responsive" alt="Responsive image" style="scale: 40%">
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <h4><strong>Step2:</strong> BLAST RefSeq against proteins of interested species</h4>
+                <br>
+                <p>Set a rational E-value (like 1E-20) and perform the protein-protein BLAST.</p>
+                <div style="text-align: center">
+                    <iframe src="https://shijunpenglab.com/sequenceserver/" id="sequence_server_iframe"
+                    width="100%" height="800px" name="topFrame" frameborder="0"></iframe>
+                </div>
+            </div>
+        </div>
+    </div></div></div>
+{% endblock %}

@@ -1,0 +1,124 @@
+{% extends 'basemodel.html' %}
+
+{% block title_block %}
+    ChIP Peak Annotation - HEMU
+{% endblock %}
+
+{% block header_block %}
+    {% load static %}
+    <div class="col-sm-2">
+        <div style="margin-top: 10px; margin-left: -5px">
+            <img src="{% static "AllPageStatic/HEMU_logo_crop.png" %}" class="img-responsive" alt="Responsive image" style="width: 72px; height: 104px">
+        </div>
+    </div>
+    <div class="col-sm-10">
+        <h2 style="margin-top: 20px; margin-left: -70px">ChIP-seq Peak Annotation Analysis</h2>
+        <p style="color: #8e8e8e; margin-left: -65px">Analyze ChIP-seq data based on R::ChIPseeker regarding <br>representative Andropogoneae species.</p>
+    </div>
+{% endblock %}
+
+{% block content_block %}
+    {% load static %}
+    <div class="container"><div class='row'><div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading" style="text-align: center">Epigenome analysis toolkit: <strong>Sample Peak Annotation</strong></div>
+            <div class="panel-body">
+                <br>
+                 <form method="post" id="ChIP-seq_analysis_mainform" style="text-align: center">
+                    {% csrf_token %}
+                    <label>
+                        <label for="main_query_id">Specify <strong style="color: darkred">sample accession ID</strong> for ChIP peak annotation</label>
+                        <input type="text" name="main_query" placeholder="SRR/ERR_" class="form-control" id="main_query_id" style="height: 45px" required>
+                    </label>
+                    <label>
+                        <label for="query_species_id">Select species</label>
+                        <select class="form-control" name="query_species" id="query_species_id" style="height: 45px">
+                            <option value="zea">Zea mays B73v4 (GCF_000005005.2)</option>
+                            <option value="sorghum">Sorghum bicolor BTx623 (GCF_000003195.3)</option>
+                            <option value="saccharum">Saccharum spontaneum (GCA_003544955.1)</option>
+                        </select>
+                    </label>
+                    <br><br>
+                    <div style="text-align: center">
+                        <span style="margin: 0 10px">TSS region length (bp)</span>
+                        <label style="margin: -5px 5px">
+                            <input type="text" name="query_tss_length" value="3000" class="form-control" style="width: 90px; height: 25px">
+                        </label>
+                        <br><br><br>
+                        <fieldset>
+                            <p>-- Additional parameters --</p>
+                            <label for="ignore_1st_exon">Ignore first exon</label>
+                            <input type="checkbox" name="ignore_1st_exon" id="ignore_1st_exon" value="T">
+                            <span>&nbsp;&nbsp;&nbsp;&nbsp;</span><!--tab-delim-simulate-->
+                            <label for="ignore_1st_intron">Ignore first intron</label>
+                            <input type="checkbox" name="ignore_1st_intron" id="ignore_1st_intron" value="T">
+                            <br>
+                            <label for="ignore_downstream">Ignore downstream peaks</label>
+                            <input type="checkbox" name="ignore_downstream" id="ignore_downstream" value="T">
+                            <span>&nbsp;&nbsp;&nbsp;&nbsp;</span><!--tab-delim-simulate-->
+                            <label for="ignore_promoter_subcategory">Ignore promoter subcategory</label>
+                            <input type="checkbox" name="ignore_promoter_subcategory" id="ignore_promoter_subcategory" value="T">
+                        </fieldset>
+                    </div>
+                    <p class="bg-danger"><b style="color: white">{{ error_message }}</b></p>
+                    <a href="javascript:exampleList()" class="btn btn-default" style="height: 45px">
+                        <span class="glyphicon glyphicon-bookmark"></span>
+                        Show Example
+                    </a>
+                    <button id="submit_form" class="btn btn-primary" style="height: 45px">
+                        <span class="glyphicon glyphicon-hourglass"></span>
+                        Start Analysis: submit task to queue
+                    </button>
+                    <br>
+                </form>
+                <div style="text-align: center">
+                    <hr>
+                    <a role="button" data-toggle="collapse" href="#collapseHmmList" aria-expanded="true" aria-controls="collapseHmmList">
+                        <h4><strong><span class="glyphicon glyphicon-menu-down"></span>
+                        Inspect information of all available ChIP-seq samples</strong></h4>
+                    </a>
+                    <div class="collapse" id="collapseHmmList">
+                        <br>
+                        <p>ChIP sample information of <strong>Zea mays B73v4 (GCF_000005005.2)</strong> <a href="{% static 'AllPageStatic/epigenome/ChIP_sampleinfo_maize.txt' %}"><strong>Download</strong></a></p>
+                        <iframe src="{% static 'AllPageStatic/epigenome/ChIP_sampleinfo_maize.txt' %}" frameborder="0" width="700px" height="300px"></iframe>
+                        <br><br>
+                        <p>ChIP sample information of <strong>Sorghum bicolor BTx623 (GCF_000003195.3)</strong> <a href="{% static 'AllPageStatic/epigenome/ChIP_sampleinfo_sorghum.txt' %}"><strong>Download</strong></a></p>
+                        <iframe src="{% static 'AllPageStatic/epigenome/ChIP_sampleinfo_sorghum.txt' %}" frameborder="0" width="700px" height="300px"></iframe>
+                        <br><br>
+                        <p>ChIP sample information of <strong>Saccharum spontaneum (GCA_003544955.1)</strong> <a href="{% static 'AllPageStatic/epigenome/ChIP_sampleinfo_saccharum.txt' %}"><strong>Download</strong></a></p>
+                        <iframe src="{% static 'AllPageStatic/epigenome/ChIP_sampleinfo_saccharum.txt' %}" frameborder="0" width="700px" height="300px"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--Pre-hidden loading animation-->
+        <div id="div_main_loader" class="loader" style="display: none"></div>
+    </div></div></div>
+{% endblock %}
+
+{% block footer_script_block %}
+    <script>
+    // Fill example data
+    function exampleList() {
+        const species = $("#query_species_id option:selected").val();
+        switch (species) {
+            case 'zea':
+                document.getElementById("main_query_id").value="ERR2321972";
+                break;
+            case 'sorghum':
+                document.getElementById("main_query_id").value="sbi-miR156a";
+                break;
+        }
+    }
+
+    // Preview CSV table
+    function previewCSV(path_to_CSV){
+        Papa.parse(path_to_CSV, {
+            download: true,
+            complete: function(results) {
+                Heiho(results.data);
+            }
+        });
+    }
+    </script>
+{% endblock %}

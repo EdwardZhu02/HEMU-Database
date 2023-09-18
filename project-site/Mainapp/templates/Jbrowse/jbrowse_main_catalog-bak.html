@@ -1,0 +1,98 @@
+{% extends 'basemodel.html' %}
+
+{% block title_block %}
+    Data Browser Module - HEMU
+{% endblock %}
+
+{% block header_block %}
+    {% load static %}
+    <div class="col-sm-2">
+        <div style="margin-top: 10px; margin-left: -5px">
+            <img src="{% static "AllPageStatic/HEMU_logo_crop.png" %}" class="img-responsive" alt="Responsive image" style="width: 72px; height: 104px">
+        </div>
+    </div>
+    <div class="col-sm-10">
+        <h2 style="margin-top: 20px; margin-left: -70px">HEMU Data Browser Module <small>Empowered with JBrowse 2</small></h2>
+        <p style="color: #8e8e8e; margin-left: -65px">Visualize genomic data in linear view <br>with customized parameters.</p>
+    </div>
+{% endblock %}
+
+{% block content_block %}
+    {% load static %}
+    <div class="container">
+        <div class='row'><div class="col-md-12"><div class="panel panel-default"><div class="panel-body">
+            <div class="col-md-7">
+                <h3 class="text-left">Genome catalog</h3>
+                <HR SIZE = 3>
+
+                <h4 class="text-left"><i>Zea mays</i> (Maize)</h4>
+                <a href="{% url 'jbrowse' %}?id=GCF_000005005.2">GCF_000005005.2-Zea_mays_B73_RefGen_v4</a>
+                <span class="label label-success">Chromosome Level</span>
+                <br>
+                <div>
+                    <span class="label label-default">ATAC-seq</span>
+                    <span class="label label-default">ChIP-seq</span>
+                    <span class="label label-default">miRNA-seq</span>
+                    <span class="label label-default">TE Annotation</span>
+                    <span class="label label-default">Gene Annotation</span>
+                </div><br>
+                <a href="{% url 'jbrowse' %}?id=GCF_902167145.1">GCF_902167145.1-Zea_mays_REFERENCE_NAM_5.0</a>
+                <span class="label label-success">Chromosome Level</span>
+                <br>
+                <div>
+                    <span class="label label-default">TE Annotation</span>
+                    <span class="label label-default">Gene Annotation</span>
+                </div><br>
+
+
+                <h4 class="text-left"><i>Sorghum bicolor</i> (Sorghum)</h4>
+                <a href="{% url 'jbrowse' %}?id=GCF_000003195.3">GCF_000003195.3-Sorghum_bicolor_BTx623</a>
+                <span class="label label-success">Chromosome Level</span>
+                <br>
+                <div>
+                    <span class="label label-default">ATAC-seq</span>
+                    <span class="label label-default">miRNA-seq</span>
+                    <span class="label label-default">TE Annotation</span>
+                    <span class="label label-default">Gene Annotation</span>
+                </div><br>
+                <a href="{% url 'jbrowse' %}?id=GCA_003482435.1">GCA_003482435.1-Sorghum_bicolor_Tx430</a><br>
+                <div>
+                    <span class="label label-default">TE Annotation</span>
+                </div><br>
+                <a href="{% url 'jbrowse' %}?id=GCA_903166325.1">GCA_903166325.1-Sorghum_bicolor_TX436</a><br>
+                <div>
+                    <span class="label label-default">TE Annotation</span>
+                </div><br>
+                <a href="{% url 'jbrowse' %}?id=GCA_903166285.1">GCA_903166285.1-Sorghum_bicolor_TX2783</a><br>
+                <div>
+                    <span class="label label-default">TE Annotation</span>
+                </div><br>
+                <a href="{% url 'jbrowse' %}?id=GCA_015952705.1">GCA_015952705.1-Sorghum_bicolor_Rio</a>
+                <span class="label label-success">Chromosome Level</span>
+                <br>
+                <div>
+                    <span class="label label-default">TE Annotation</span>
+                </div><br>
+
+                <h4 class="text-left"><i>Saccharum</i> (Sugarcane)</h4>
+                <a href="{% url 'jbrowse' %}?id=GCA_020631735.1">GCA_020631735.1-Saccharum_officinarum</a><br>
+                <div>
+                    <span class="label label-default">TE Annotation</span>
+                    <span class="label label-default">Gene Annotation</span>
+                </div><br>
+                <a href="{% url 'jbrowse' %}?id=GCA_022457205.1">GCA_022457205.1-Saccharum_spontaneum</a><br>
+                <div>
+                    <span class="label label-default">TE Annotation</span>
+                    <span class="label label-default">Gene Annotation</span>
+                </div><br>
+            </div>
+
+            <div class="col-md-5">
+                <h3 class="text-left">Featured species</h3>
+                <HR SIZE = 3>
+
+            </div>
+
+        </div></div></div></div>
+    </div>
+{% endblock %}

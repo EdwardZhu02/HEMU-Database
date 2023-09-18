@@ -1,0 +1,169 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Page Title-->
+    <link rel="shortcut icon" href="{% static "favicon.ico" %}" />
+    <title>
+        {% block title_block %}{% endblock %}
+    </title>
+
+    <!--External CSS styles-->
+    {% block style_block %}{% endblock %}
+    <link rel='stylesheet' href='{% static 'Bootstrap-3.4.1/css/bootstrap.min.css' %}'>
+    <link rel='stylesheet' href='{% static 'CSS/heiho-modified.css' %}' />
+    <link rel="stylesheet" href={% static 'CSS/loader-main.css' %}>
+</head>
+<body>
+    <!--Navigation Bar-->
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" style="transform: scale(1.2)" href={% url 'home_page' %}>HEMU</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse" aria-expanded="false" style="height: 1px;">
+          <ul class="nav navbar-nav">
+            <li><a href={% url 'home_page' %}>Home</a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Genome<span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href={% url 'genome_gene_structure' %}>Gene Information & Structure Search &nbsp<span class="label label-info">Interactive</span></a></li>
+                <li><a href={% url 'genome_gene_function' %}>Gene Functional Annotation Search</a></li>
+                <li><a href={% url 'genome_gene_synteny' %}>Genome Synteny Viewer</a></li>
+                <li><a href={% url "jbrowse" %}>Multi-omics Genome Browser</a></li>
+                <li><a href={% url "sequenceserver" %}>The BLAST Server</a></li>
+              </ul>
+            </li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Transcriptome<span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href={% url 'gene_expression' %}>Gene Expression Profile Search</a></li>
+                <li><a href={% url 'gene_sequence' %}>Raw Sequence Acquisition <small>(Gene/Transcript/Protein)</small></a></li>
+                <li><a href={% url 'gene_DE' %}>Differential Gene Expression Analysis</a></li>
+                <li><a href={% url 'gene_gokegg' %}>GO/KEGG Functional Enrichment</a></li>
+                <li><a href="{% url 'gene_wgcna' %}">Weighted Gene Co-Expression Network Analysis</a></li>
+              </ul>
+            </li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Gene Family<span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href={% url 'genefam_hmm' %}>Family member Identification (HMM)</a></li>
+                <li><a href={% url 'genefam_blastp' %}>Family member Identification (BLASTP)</a></li>
+                <li><a href={% url 'genefam_phylo' %}>Phylogenetic Analysis</a></li>
+                <li><a href={% url 'genefam_expheatmap' %}>Family Expression Heatmap Generation</a></li>
+              </ul>
+            </li>docker
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">TE<span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href={% url 'te_expression' %}>TE Expression Profile Search <small>(Family-level/Sample-level)</small></a></li>
+                <li><a href={% url 'te_location' %}>TE Insertion Location Search</a></li>
+                <li><a href={% url 'te_insertion' %}>Chromosome-level TE Insertion Density Search &nbsp<span class="label label-info">Interactive</span></a></li>
+              </ul>
+            </li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Epigenome<span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href={% url 'atac_peakloc_search' %}>Chromatin Accessibility Search</a></li>
+                <li><a href={% url 'chip_peakanno' %}>ChIP-seq peak annotation <small>(Sample-level)</small></a></li>
+              </ul>
+            </li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Data Warehouse<span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href={% url 'user_guide' %}>The HEMU user guide</a></li>
+
+                <li role="separator" class="divider"></li>
+                <li class="dropdown-header">Genomic resources</li>
+                <li><a href="#">Genome and gene annotation</a></li>
+                <li><a href="#">Transcript, CDS, protein</a></li>
+
+                <li role="separator" class="divider"></li>
+                <li class="dropdown-header">Transcriptomic resources</li>
+                <li><a href="#">Gene expression matrix</a></li>
+
+                <li role="separator" class="divider"></li>
+                <li class="dropdown-header">Epigenomic resources</li>
+                <li><a href="#">ATAC-seq peaks</a></li>
+                <li><a href="#">ChIP-seq peaks</a></li>
+
+                <li role="separator" class="divider"></li>
+                <li class="dropdown-header">TEs</li>
+                <li><a href="#">TE annotation</a></li>
+                <li><a href="#">TE expression matrix</a></li>
+
+              </ul>
+            </li>
+            <li><a href={% url 'external_links' %}>External Links</a></li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+
+    <!--Page Header Row-->
+    {% block pre_header_block %}{% endblock %}
+    <div class="container" style="margin: 25px 110px;">
+        <div class="page-header">
+            <div class='row'>
+                {% block header_block %}{% endblock %}
+            </div>
+        </div>
+    </div>
+
+    <!--Main Page Content-->
+    {% block content_block %}{% endblock %}
+
+    <!--Subsidiary Page Content-->
+    {% block aux_block1 %}{% endblock %}
+    {% block aux_block2 %}{% endblock %}
+
+    <!--External Javascript-->
+    {% block javascript_block %}{% endblock %}
+    <script type='text/javascript' src='{% static 'JS/jquery-1.12.4.min.js' %}'></script>
+    <script type='text/javascript' src='{% static 'Bootstrap-3.4.1/js/bootstrap.min.js' %}'></script>
+    <script type='text/javascript' src='{% static 'JS/papaparse.min.js' %}'></script>
+    <script type='text/javascript' src='{% static 'JS/heiho.js' %}'></script>
+    <script type='text/javascript' src='{% static 'JS/echarts.min.js' %}'></script>
+
+    <!--Subsidiary Page Content-->
+    {% block footer_script_block %}{% endblock %}
+
+    <!--Global Footer-->
+    <footer class="container-fluid">
+        <footer class="footer">
+            <div class="container">
+                <br><br>
+                <HR style= "width: 100%" SIZE = 3>
+                <address>
+                    <span class="glyphicon glyphicon-wrench"></span>
+                    <strong>Edward Zhu</strong> <small>(Chief developer & site maintainer)</small><br>
+                    <a href="mailto:edwardmashed@gmail.com">edwardmashed@gmail.com</a>
+                </address>
+                <address>
+                    <strong>School of Agriculture, Sun Yat-sen University</strong><br>
+                    No.66, Gongchang Road, Guangming District, Shenzhen, Guangdong<br>
+                    518107, P.R.China<br>
+                </address>
+                <!--<div><a href="https://beian.miit.gov.cn/" target=_blank>粤ICP备2023017307号</a></div>-->
+                <strong>Our other projects</strong><br>
+                <a href="{% url 'site_manage' %}">Manage site</a><br>
+                <a href="{% url 'sd_home_page' %}">The Hezhi sesame resource database</a><br>
+                <br><br><br>
+            </div>
+        </footer>
+    </footer>
+
+</body>
+</html>

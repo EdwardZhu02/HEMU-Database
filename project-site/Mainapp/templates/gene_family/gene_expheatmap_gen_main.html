@@ -1,0 +1,118 @@
+{% extends 'basemodel.html' %}
+
+{% block title_block %}
+    Gene family expression heatmap generator - HEMU
+{% endblock %}
+
+{% block header_block %}
+    {% load static %}
+    <div class="col-sm-2">
+        <div style="margin-top: 10px; margin-left: -5px">
+            <img src="{% static "AllPageStatic/HEMU_logo_crop.png" %}" class="img-responsive" alt="Responsive image" style="width: 72px; height: 104px">
+        </div>
+    </div>
+    <div class="col-sm-10">
+        <h2 style="margin-top: 20px; margin-left: -70px">Family Expression Heatmap</h2>
+        <p style="color: #8e8e8e; margin-left: -65px">Visualize expression levels among members within interested gene family by
+            <br>generating expression level heatmaps.</p>
+    </div>
+{% endblock %}
+
+{% block content_block %}
+    <div class='container'><div class='row'><div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading" style="text-align: center">Gene family analysis toolkit: <strong>Expression Heatmap Generator</strong></div>
+            <div class="panel-body">
+                <form method="post" class="form" style="text-align: center">
+                    {% csrf_token %}
+                    <div class="col-sm-6">
+                        <label for="query_species_id">Species for expression level querying</label>
+                        <select class="form-control" name="query_species" id="query_species_id" style="height: 45px">
+                            <option value="coix" selected>Coix lacryma-jobi var.lacryma-jobi (GCA_009763385.1)</option>
+                            <option value="zea">Zea mays B73v4 (GCF_000005005.2)</option>
+                            <option value="saccharum">Saccharum spontaneum (GCA_003544955.1)</option>
+                            <option value="sorghum">Sorghum bicolor BTx623 (GCF_000003195.3)</option>
+                            <option value="miscanthus">Miscanthus lutarioriparius (GCA_904845875.1)</option>
+                        </select>
+                        <br>
+                        <label for="query_exp_met_id">Expression level format</label>
+                        <select class="form-control" name="query_exp_met" id="query_exp_met_id">
+                            <option value="TPM" selected>TPM</option>
+                            <option value="FPKM">FPKM</option>
+                        </select>
+                        <br>
+                        <p class="bg-danger"><b style="color: white">{{ error_message }}</b></p>
+                        <a class="btn btn-default" href="javascript:exampleList()">
+                            <span class="glyphicon glyphicon-bookmark"></span>
+                            Show Examples
+                        </a>
+                        <button id="submit_form" class="btn btn-primary">
+                            <span class="glyphicon glyphicon-hourglass"></span>
+                            Submit Task
+                        </button>
+                    </div>
+                    <div class="col-sm-6">
+                        <label for="query_accession_list_id">Sample Accession List <strong style="color: darkred">(100 Max)</strong></label>
+                        <textarea class="form-control" rows="12" cols="50" name="query_accession_list" id="query_accession_list_id" required></textarea>
+                        <br>
+                        <label for="query_gene_list_id">Gene ID List <strong style="color: darkred">(100 Max)</strong></label>
+                        <textarea class="form-control" rows="13" cols="50" name="query_gene_list" id="query_gene_list_id" required></textarea>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div></div></div>
+{% endblock %}
+
+{% block javascript_block %}
+    <script>
+
+    function exampleList() {
+    // Display search examples
+    const species = $("#query_species_id option:selected").val();
+    switch (species) {
+        case 'coix':
+            document.getElementById("query_accession_list_id").value="SRR14373601\n\
+SRR14373602\n\
+SRR14373603\n\
+SRR14373604\n\
+SRR14373605\n\
+SRR14373606\n\
+SRR14373607\n\
+SRR14373608\n\
+SRR14373609\n\
+SRR14373610\n\
+SRR14373611\n\
+SRR14373612";
+            document.getElementById("query_gene_list_id").value="Cl044485\n\
+Cl044484\n\
+Cl044483\n\
+Cl044482\n\
+Cl044481\n\
+Cl044480\n\
+Cl044479\n\
+Cl044478\n\
+Cl044477\n\
+Cl044476\n\
+Cl044475\n\
+Cl044474\n\
+Cl044473\n\
+Cl044472\n\
+Cl044471\n\
+Cl044470\n\
+Cl044469\n\
+Cl044468\n\
+Cl044467\n\
+Cl044466\n\
+Cl044465\n\
+Cl044464\n\
+Cl044463\n\
+Cl044462\n\
+Cl044461\n\
+Cl044460\n\
+Cl044459";
+        }
+    }
+
+    </script>
+{% endblock %}

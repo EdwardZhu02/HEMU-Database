@@ -1,0 +1,145 @@
+{% extends 'basemodel.html' %}
+{% load static %}
+
+{% block title_block %}
+    Search result - HEMU
+{% endblock %}
+
+{% block header_block %}
+    {% load static %}
+    <div class="col-sm-2">
+        <div style="margin-top: 10px; margin-left: -5px">
+            <img src="{% static "AllPageStatic/HEMU_logo_crop.png" %}" class="img-responsive" alt="Responsive image" style="width: 72px; height: 104px">
+        </div>
+    </div>
+    <div class="col-sm-10">
+        <h2 style="margin-top: 20px; margin-left: -70px">Gene Expression Profiles</h2>
+        <p style="color: #8e8e8e; margin-left: -65px">Search gene expression data regarding <br>representative Andropogoneae species.</p>
+    </div>
+{% endblock %}
+
+{% block content_block %}
+    {% load static %}
+    <div class="container">
+        <div class='row'>
+            <div class="col-md-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading" style="text-align: center">Gene Expression Database: Main Search</div>
+                    <div class="panel-body">
+                        <br>
+                        <form method="post" style="text-align: center">
+                            <label>
+                                {% csrf_token %}
+                                <input type="text" name="main_query" placeholder="separate multiple queries with ;" value="{{ last_query }}" class="form-control" id="main_query_id" style="width: 550px; height: 45px" required>
+                            </label>
+                            <label>
+                                <select class="form-control" name="query_species" id="query_species_id" style="height: 45px">
+                                    <option value="coix" selected>Coix lacryma-jobi var.lacryma-jobi (GCA_009763385.1)</option>
+                                    <option value="zea">Zea mays B73v4 (GCF_000005005.2)</option>
+                                    <option value="saccharum">Saccharum spontaneum (GCA_003544955.1)</option>
+                                    <option value="sorghum">Sorghum bicolor BTx623 (GCF_000003195.3)</option>
+                                    <option value="miscanthus">Miscanthus lutarioriparius (GCA_904845875.1)</option>
+                                </select>
+                            </label>
+                            <br>
+                            <label class="radio-inline">
+                                <input type="radio" name="optionsRadios" id="FPKM_chosen" value="FPKM"> in FPKM
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="optionsRadios" id="TPM_chosen" value="TPM" checked> in TPM
+                            </label>
+                            <br>
+                            <br>
+                            <a href="javascript:exampleList()" class="btn btn-default" style="width: 130px; height: 35px">Show Example</a>
+                            <input type="submit" value="Search" class="btn btn-primary" style="width: 200px; height: 35px">
+
+                            <br>
+                            <HR style= "width: 80%" SIZE = 3>
+                            <span id="helpBlock" class="help-block">Results may take a while to display due to the R-dependent plotting process. Please wait.</span>
+                            <span style="color: darkred">{{ error_msg }}</span>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="loader-wrapper" style="text-align: center">
+        <b style="color: darkred">Task time consumption: {{ time_consumption }}s</b>
+    </div>
+
+    {% for indv_query in query_list_full %}
+
+        <div class='container'>
+            <div class='row'>
+                <div class="col-md-8">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">{{ indv_query.0.0 }}: Expression Plots ({{ query_format }})</h3>
+                        </div>
+                        <div class="panel-body">
+                            <iframe src="{% static 'Temp_R_html/' %}{{ indv_query.0.0 }}_plt1.html"
+                            width="700px" height= "400px" name="topFrame" frameborder="0"></iframe>
+
+                            <iframe src="{% static 'Temp_R_html/' %}{{ indv_query.0.0 }}_plt2.html"
+                                    width="700px" height= "500px" name="topFrame" frameborder="0"></iframe>
+                            <br><hr>
+                            <div class="text-center">
+                                <a class="btn btn-default" href="{% url 'gene_sequence' %}?sp={{ query_species }}&gene={{ indv_query.0.0 }}">View raw sequence</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">{{ indv_query.0.0 }}: Fundamental Info ({{ query_format }})</h3>
+                        </div>
+                        <div class="panel-body">
+                            This panel displays fundamental information regarding the query gene.
+                            <ul class="list-group">
+                                <li class="list-group-item">Gene ID: <b style="color: #ff1e3a">{{ indv_query.0.0 }}</b></li>
+                                <li class="list-group-item">Detected in <b style="color: #ff1e3a">{{ indv_query.0.1 }}/{{ indv_query.0.2 }}</b> samples <b style="color: #ff1e3a">({% widthratio indv_query.0.1 indv_query.0.2 100 %}%)</b></li>
+                                <li class="list-group-item">Max: <b>{{ indv_query.0.3 }}</b></li>
+                                <li class="list-group-item">Min: <b>{{ indv_query.0.4 }}</b></li>
+                                <li class="list-group-item">Median: <b>{{ indv_query.0.5 }}</b></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    {% endfor %}
+
+{% endblock %}
+
+{% block footer_script_block %}
+    <script>
+        $(window).on('load', function (){
+            $('.loader-wrapper').fadeOut()
+        });
+    </script>
+    <script>
+        function exampleList() {
+            const species = $("#query_species_id option:selected").val();
+            switch (species) {
+                case 'coix':
+                    document.getElementById("main_query_id").value="Cl044485;Cl033742";
+                    break;
+                case 'zea':
+                    document.getElementById("main_query_id").value="Zm00001d054112";
+                    break;
+                case 'sorghum':
+                    document.getElementById("main_query_id").value="SORBI_3004G336700";
+                    break;
+                case 'saccharum':
+                    document.getElementById("main_query_id").value="SORBI_3004G336700";
+                    break;
+                case 'miscanthus':
+                    document.getElementById("main_query_id").value="SORBI_3004G336700";
+                    break;
+            }
+        }
+    </script>
+{% endblock %}
+

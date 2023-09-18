@@ -1,0 +1,379 @@
+{% extends 'basemodel.html' %}
+
+{% block title_block %}
+    GO/KEGG Enrichment - HEMU
+{% endblock %}
+
+{% block header_block %}
+    {% load static %}
+    <div class="col-sm-2">
+        <div style="margin-top: 10px; margin-left: -5px">
+            <img src="{% static "AllPageStatic/HEMU_logo_crop.png" %}" class="img-responsive" alt="Responsive image" style="width: 72px; height: 104px">
+        </div>
+    </div>
+    <div class="col-sm-10">
+        <h2 style="margin-top: 20px; margin-left: -70px">GO/KEGG Enrichment</h2>
+        <p style="color: #8e8e8e; margin-left: -65px">Search functional annotation information of gene transcripts <br>in representative Andropogoneae species.</p>
+    </div>
+{% endblock %}
+
+{% block content_block %}
+    <div class="container"><div class='row'><div class="col-md-12">
+        <!--div class="panel panel-default">
+            <div class="panel-heading" style="text-align: center">Gene Expression Databae: GO/KEGG Annotation Search</div>
+            <div class="panel-body">
+                <form method="post" style="text-align: center">
+                    {% csrf_token %}
+                    <label>
+                        <input type="text" name="main_query" placeholder="separate multiple queries with ;" class="form-control" id="main_query_id" style="width: 550px; height: 45px" required>
+                    </label>
+                    <label>
+                        <select class="form-control" name="query_species" id="query_species_id_single" style="height: 45px">
+                            <option value="coix" selected>Coix lacryma-jobi var.lacryma-jobi (GCA_009763385.1)</option>
+                            <option value="zea">Zea mays B73v4 (GCF_000005005.2)</option>
+                            <option value="saccharum">Saccharum spontaneum (GCA_003544955.1)</option>
+                            <option value="sorghum">Sorghum bicolor BTx623 (GCF_000003195.3)</option>
+                            <option value="miscanthus">Miscanthus lutarioriparius (GCA_904845875.1)</option>
+                        </select>
+                    </label>
+                    <br><br><br>
+                    <a class="btn btn-default" href="javascript:exampleList()">Show Examples</a>
+                    <input type="submit" value="Enrich" class="btn btn-primary" style="width: 200px">
+                </form>
+            </div>
+        </div>
+        <br-->
+        <div class="panel panel-default"><!--GO/KEGG enrich-->
+            <div class="panel-heading" style="text-align: center">Transcriptome analysis toolkit: <strong>GO/KEGG Enrichment</strong></div>
+            <div class="panel-body">
+                <form method="post" style="text-align: center">
+                    {% csrf_token %}
+                    <label class="col-sm-5">
+                        <p class="form-control-static">Species to enrich</p>
+                        <select class="form-control" name="query_species" id="query_species_id" style="height: 45px">
+                            <option value="coix" selected>Coix lacryma-jobi var.lacryma-jobi (GCA_009763385.1)</option>
+                            <option value="zea">Zea mays B73v4 (GCF_000005005.2)</option>
+                            <option value="saccharum">Saccharum spontaneum (GCA_003544955.1)</option>
+                            <option value="sorghum">Sorghum bicolor BTx623 (GCF_000003195.3)</option>
+                            <option value="miscanthus">Miscanthus lutarioriparius (GCA_904845875.1)</option>
+                            <option value="miscanthus_sine">Miscanthus sinensis (Phytozome v7.0)</option>
+                            <option value="chrysopogon">Chrysopogon serrulatus (GCA_015844335.1)</option>
+                            <option value="hyparrhenia">Hyparrhenia diplandra (GCA_015847255.1)</option>
+                            <option value="themeda">Themeda triandra (GCA_018135685.1)</option>
+                        </select>
+                        <br>
+                        <label class="radio-inline">
+                            <input type="radio" name="optionsRadios" id="GO_chosen" value="GO" checked> Enrich GO
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" name="optionsRadios" id="KEGG_chosen" value="KEGG"> Enrich KEGG
+                        </label>
+                        <br>
+                        <hr>
+                        <p>Please ensure that each gene entry is separated by a <u>line break</u> when entering query (as is shown in the example).</p>
+                        <br>
+                        <a class="btn btn-default" href="javascript:exampleList()">
+                            <span class="glyphicon glyphicon-bookmark"></span>
+                            Show Example
+                        </a>
+                        <button id="submit_form" class="btn btn-primary" style="height: 45px">
+                            <span class="glyphicon glyphicon-hourglass"></span>
+                            Enrich: submit task to queue
+                        </button>
+                        <!--input type="submit" value="Enrich" class="btn btn-primary" style="width: 200px"-->
+                    </label>
+                    <label class="col-sm-7">
+                        <p class="form-control-static">Gene List</p>
+                        <textarea class="form-control" rows="10" cols="50" name="query_gene_list" id="query_gene_list_id" required></textarea>
+                    </label>
+                </form>
+            </div>
+        </div>
+    </div></div></div>
+
+{% endblock %}
+
+{% block footer_script_block %}
+    <script>
+        function exampleList() {
+            const species = $("#query_species_id option:selected").val();
+            switch (species) {
+                case 'zea':
+                    document.getElementById("query_gene_list_id").value="Zm00001d037395\n\
+Zm00001d039538\n\
+Zm00001d038219\n\
+Zm00001d042941\n\
+Zm00001d053411\n\
+Zm00001d038035\n\
+Zm00001d013379\n\
+Zm00001d031213\n\
+Zm00001d039744\n\
+Zm00001d042150\n\
+Zm00001d045973\n\
+Zm00001d004637\n\
+Zm00001d005652\n\
+Zm00001d005911\n\
+Zm00001d016280\n\
+Zm00001d010619\n\
+Zm00001d006522\n\
+Zm00001d038074\n\
+Zm00001d019339\n\
+Zm00001d051060\n\
+Zm00001d012807\n\
+Zm00001d000452\n\
+Zm00001d001548\n\
+Zm00001d000162\n\
+Zm00001d036138\n\
+Zm00001d009326\n\
+Zm00001d041746\n\
+Zm00001d049105\n\
+Zm00001d031547\n\
+Zm00001d023145\n\
+Zm00001d041513\n\
+Zm00001d006483\n\
+Zm00001d045237\n\
+Zm00001d053835\n\
+Zm00001d041331\n\
+Zm00001d023657\n\
+Zm00001d053157\n\
+Zm00001d003689\n\
+Zm00001d051709\n\
+Zm00001d043485\n\
+Zm00001d025106\n\
+Zm00001d040216\n\
+Zm00001d009843\n\
+Zm00001d043354\n\
+Zm00001d038897\n\
+Zm00001d004994\n\
+Zm00001d025785\n\
+Zm00001d011535\n\
+Zm00001d042888\n\
+Zm00001d044863\n\
+Zm00001d026434\n\
+Zm00001d022034\n\
+Zm00001d032606\n\
+Zm00001d029360\n\
+Zm00001d001529\n\
+Zm00001d036288\n\
+Zm00001d045019\n\
+Zm00001d007257\n\
+Zm00001d040287\n\
+Zm00001d025318\n\
+Zm00001d031505\n\
+Zm00001d051132\n\
+Zm00001d051258\n\
+Zm00001d049672\n\
+Zm00001d002674\n\
+Zm00001d046476\n\
+Zm00001d050774\n\
+Zm00001d024838\n\
+Zm00001d039246\n\
+Zm00001d045018\n\
+Zm00001d008692\n\
+Zm00001d030952\n\
+Zm00001d014632\n\
+Zm00001d035253\n\
+Zm00001d045133\n\
+Zm00001d026019\n\
+Zm00001d035807\n\
+Zm00001d029805\n\
+Zm00001d032528\n\
+Zm00001d022692\n\
+Zm00001d022836\n\
+Zm00001d025253\n\
+Zm00001d041915\n\
+Zm00001d023828\n\
+Zm00001d023674\n\
+Zm00001d016729\n\
+Zm00001d023846\n\
+Zm00001d019111\n\
+Zm00001d043628\n\
+Zm00001d046200\n\
+Zm00001d020883\n\
+Zm00001d030866\n\
+Zm00001d048372\n\
+Zm00001d038384\n\
+Zm00001d014254\n\
+Zm00001d040679\n\
+Zm00001d006484\n\
+Zm00001d048178\n\
+Zm00001d033566\n\
+Zm00001d039923\n\
+Zm00001d004417\n\
+Zm00001d033770\n\
+Zm00001d041784\n\
+Zm00001d049231\n\
+Zm00001d018975\n\
+Zm00001d036165\n\
+Zm00001d007646\n\
+Zm00001d050480\n\
+Zm00001d036513\n\
+Zm00001d041577\n\
+Zm00001d007578\n\
+Zm00001d014730\n\
+Zm00001d029226\n\
+Zm00001d007405\n\
+Zm00001d052665\n\
+Zm00001d018955\n\
+Zm00001d027016\n\
+Zm00001d037923\n\
+Zm00001d040952\n\
+Zm00001d044912\n\
+Zm00001d047452\n\
+Zm00001d028678\n\
+Zm00001d010560\n\
+Zm00001d000502\n\
+Zm00001d040832\n\
+Zm00001d050314\n\
+Zm00001d042029\n\
+Zm00001d045962\n\
+Zm00001d017725\n\
+Zm00001d026720\n\
+Zm00001d015773\n\
+Zm00001d015445\n\
+Zm00001d035777\n\
+Zm00001d028184\n\
+Zm00001d052507\n\
+Zm00001d015949\n\
+Zm00001d052372\n\
+Zm00001d008809\n\
+Zm00001d031702\n\
+Zm00001d053084\n\
+Zm00001d034157\n\
+Zm00001d019469\n\
+Zm00001d021009\n\
+Zm00001d018156\n\
+Zm00001d013316\n\
+Zm00001d036086\n\
+Zm00001d044091\n\
+Zm00001d005287\n\
+Zm00001d017225\n\
+Zm00001d013548\n\
+Zm00001d006223\n\
+Zm00001d026420\n\
+Zm00001d038120\n\
+Zm00001d039484\n\
+Zm00001d053353\n\
+Zm00001d044701\n\
+Zm00001d019803\n\
+Zm00001d002481\n\
+Zm00001d030096\n\
+Zm00001d007715\n\
+Zm00001d045949\n\
+Zm00001d018059\n\
+Zm00001d013101\n\
+Zm00001d009610\n\
+Zm00001d033237\n\
+Zm00001d042069\n\
+Zm00001d027764\n\
+Zm00001d009524\n\
+Zm00001d010154\n\
+Zm00001d021679\n\
+Zm00001d033767\n\
+Zm00001d043194\n\
+Zm00001d007463\n\
+Zm00001d034022\n\
+Zm00001d008598\n\
+Zm00001d029237\n\
+Zm00001d042113\n\
+Zm00001d045706\n\
+Zm00001d001703\n\
+Zm00001d021885\n\
+Zm00001d010979\n\
+Zm00001d003646\n\
+Zm00001d046848\n\
+Zm00001d021451\n\
+Zm00001d041649\n\
+Zm00001d047256\n\
+Zm00001d008456\n\
+Zm00001d052096\n\
+Zm00001d007281\n\
+Zm00001d050532\n\
+Zm00001d018189\n\
+Zm00001d050495\n\
+Zm00001d026387\n\
+Zm00001d011738\n\
+Zm00001d023266\n\
+Zm00001d052474\n\
+Zm00001d007672\n\
+Zm00001d027690\n\
+Zm00001d040153\n\
+Zm00001d035285";
+                    break;
+                case 'coix':
+                    document.getElementById("query_gene_list_id").value="Cl039039\n\
+Cl039041\n\
+Cl039038\n\
+Cl028982\n\
+Cl039037\n\
+Cl039042\n\
+Cl039040\n\
+Cl039033\n\
+Cl039034\n\
+Cl039035\n\
+Cl039029\n\
+Cl023927\n\
+Cl039036\n\
+Cl043477\n\
+Cl039030\n\
+Cl039357\n\
+Cl032170\n\
+Cl039032\n\
+Cl028866\n\
+Cl008894\n\
+Cl010548\n\
+Cl039710\n\
+Cl032221\n\
+Cl008895\n\
+Cl023295\n\
+Cl038128\n\
+Cl028887\n\
+Cl004785\n\
+Cl034656\n\
+Cl031486\n\
+Cl007107\n\
+Cl028889\n\
+Cl025384\n\
+Cl000272\n\
+Cl035924\n\
+Cl023158\n\
+Cl010911\n\
+Cl034938\n\
+Cl004996\n\
+Cl035445\n\
+Cl010850\n\
+Cl039760\n\
+Cl039356\n\
+Cl007327\n\
+Cl023984\n\
+Cl041993\n\
+Cl011965\n\
+Cl012253\n\
+Cl034023\n\
+Cl029764\n\
+Cl019489\n\
+Cl000103\n\
+Cl032733\n\
+Cl000729\n\
+Cl020749\n\
+Cl027120\n\
+Cl034264\n\
+Cl037547\n\
+Cl037716\n\
+Cl010561\n\
+Cl024256\n\
+Cl028790\n\
+Cl016487\n\
+Cl039709\n\
+Cl031488\n\
+Cl026242\n\
+Cl016353\n\
+Cl034934\n\
+Cl005480\n\
+Cl034422";
+                break;
+            }
+        }
+    </script>
+{% endblock %}
+

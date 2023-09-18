@@ -1,0 +1,107 @@
+{% extends 'basemodel.html' %}
+
+{% block title_block %}
+    Celery-dependent task deployment testing page
+{% endblock %}
+
+{% block header_block %}
+    <h2>Celery-dependent task deployment testing page</h2>
+{% endblock %}
+
+{% block content_block %}
+    <div class="container">
+        <div class='row'>
+            <div class="col-md-4"></div>
+            <div class="col-md-4"><div class="panel panel-default"><div class="panel-body">
+                <div style="text-align: center">
+                    <p>Submit a 10-second time consuming task to celery queue. <br></p>
+                    <p>Sending periodic AJAX requests every 2 seconds to validate if the task is completed. <br></p>
+                    <p style="color: darkred"><strong>Check the console for more status.</strong></p>
+                    <a class="btn btn-default" href="{% url 'async_test' %}?task=task1">Deploy task 1</a>
+                </div>
+                <div id="div_task_id" hidden>{{ task_id }}</div>
+                <div id="div_main_loader" class="loader" style="display: none">Loading..</div>
+            </div></div></div>
+            <div class="col-md-4"></div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block footer_script_block %}
+    <script>
+    // Set up django CSRF verification mechanism
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // Set up django CSRF verification mechanism
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+
+    // Set up AJAX
+    $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            const csrftoken = getCookie('csrftoken');
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    })
+
+    // Evaluate if a pending task is to be submitted
+    var task_id_global = undefined
+
+    // $('#btn_submit_task1').click(function () {
+    $(window).on('load', function (){
+
+        var loader_div = document.getElementById('div_main_loader')
+        // loader_div.style.display = 'none'
+
+        var taskId = $("#div_task_id").html()
+        if(taskId == null || taskId.length === 0){
+            // no task pending
+        }else {
+            // task executing
+            console.log("Started querying task status: " + taskId)
+            task_id_global = taskId
+            loader_div.style.display = 'block'
+            loop_get_taskstatus()
+        }
+    })
+
+    function loop_get_taskstatus() {
+        var taskId = task_id_global
+        //Send GET AJAX request every 2 seconds, querying for task status
+        setTimeout(loop_get_taskstatus,2*1000)
+
+        $.ajax({
+            url: '{% url 'async_progress_query' %}?taskid=' + taskId,
+            type: 'get',
+            dataType: 'json',
+            success: function (json_data) {
+                var taskResult = eval(json_data)
+                var taskStatus = taskResult['state']
+                console.log(taskStatus)
+
+                if(taskStatus === 'SUCCESS') {
+                    location.href='{% url 'async_test' %}?success=1'
+                }
+            }
+        })
+    }
+    </script>
+{% endblock %}

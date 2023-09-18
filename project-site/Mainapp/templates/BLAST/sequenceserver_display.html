@@ -1,0 +1,65 @@
+{% extends 'basemodel.html' %}
+
+{% block title_block %}
+    BLAST Module - HEMU
+{% endblock %}
+
+{% block header_block %}
+    {% load static %}
+    <div class="col-sm-2">
+        <div style="margin-top: 10px; margin-left: -5px">
+            <img src="{% static "AllPageStatic/HEMU_logo_crop.png" %}" class="img-responsive" alt="Responsive image" style="width: 72px; height: 104px">
+        </div>
+    </div>
+    <div class="col-sm-10">
+        <h2 style="margin-top: 20px; margin-left: -70px">HEMU BLAST Module <small>Empowered with SequenceServer</small></h2>
+        <p style="color: #8e8e8e; margin-left: -65px">Search for homology data regarding <br>published Andropogoneae species.</p>
+    </div>
+{% endblock %}
+
+{% block content_block %}
+    {% load static %}
+    <div class="container">
+        <div class='row'>
+            <div class="col-md-12">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <!--a href="javascript:sendInfo()">Manual Autofill</a-->
+                        <div style="text-align: center">
+                            <iframe src="https://shijunpenglab.com/sequenceserver/" id="sequence_server_iframe"
+                            width="100%" height="1000px" name="topFrame" frameborder="0"></iframe>
+                        </div>
+                        <input type="hidden" id="seq_transfer" value="{{ seq_transfer }}">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block footer_script_block %}
+    <script type="text/javascript">
+
+        $(window).on('load', function (){
+            const seqTransfer = document.getElementById("seq_transfer").value
+            const seqTransfer_rmspace = seqTransfer.replace(/(^\s*)|(\s*$)/g, '');
+            if (seqTransfer_rmspace === '' || seqTransfer_rmspace === undefined || seqTransfer_rmspace == null) {
+                console.log('No autofill detected.')
+                //const sonIframe = document.getElementById("sequence_server_iframe");
+                //sonIframe.contentWindow.postMessage(seqTransfer, '*');
+            } else {
+                console.log('Autofill detected.')
+                alert("====Autofilling Detected====\n\n" + document.getElementById("seq_transfer").value)
+                const sonIframe = document.getElementById("sequence_server_iframe");
+                sonIframe.contentWindow.postMessage(seqTransfer, '*');
+            }
+
+
+        });
+        function sendInfo() {
+            const seqTransfer = document.getElementById("seq_transfer").value
+            const sonIframe = document.getElementById("sequence_server_iframe");
+            sonIframe.contentWindow.postMessage(seqTransfer, '*');
+        }
+    </script>
+{% endblock %}

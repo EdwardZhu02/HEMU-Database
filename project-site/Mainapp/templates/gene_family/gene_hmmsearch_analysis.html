@@ -1,0 +1,98 @@
+{% extends 'basemodel.html' %}
+
+{% block title_block %}
+    Gene family identification - HEMU
+{% endblock %}
+
+{% block header_block %}
+    {% load static %}
+    <div class="col-sm-2">
+        <div style="margin-top: 10px; margin-left: -5px">
+            <img src="{% static "AllPageStatic/HEMU_logo_crop.png" %}" class="img-responsive" alt="Responsive image" style="width: 72px; height: 104px">
+        </div>
+    </div>
+    <div class="col-sm-10">
+        <h2 style="margin-top: 20px; margin-left: -70px">Gene Family Identification (HMM)</h2>
+        <p style="color: #8e8e8e; margin-left: -65px">Identify members of putative gene families using HMM (Hidden Markov Model)-based
+            <br>prediction strategies from proteins of Andropogoneae species</p>
+    </div>
+{% endblock %}
+
+{% block content_block %}
+    {% load static %}
+    <div class="container"><div class='row'><div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading" style="text-align: center">Gene family analysis toolkit: <strong>HMM-based family identification</strong></div>
+            <div class="panel-body">
+                <br>
+                <form method="post" id="sequence_query_mainform" style="text-align: center">
+                    {% csrf_token %}
+                    <label>
+                        <label for="query_species_id">Select protein sequence sets</label>
+                        <select class="form-control" name="query_species" id="query_species_id" style="height: 45px">
+                            <option value="coix" selected>Coix lacryma-jobi var.lacryma-jobi (GCA_009763385.1)</option>
+                            <option value="zea">Zea mays B73v4 (GCF_000005005.2)</option>
+                            <option value="saccharum">Saccharum spontaneum (GCA_003544955.1)</option>
+                            <option value="sorghum">Sorghum bicolor BTx623 (GCF_000003195.3)</option>
+                            <option value="miscanthus">Miscanthus lutarioriparius (GCA_904845875.1)</option>
+                            <option value="miscanthus_sine">Miscanthus sinensis (Phytozome v7.0)</option>
+                            <option value="chrysopogon">Chrysopogon serrulatus (GCA_015844335.1)</option>
+                            <option value="hyparrhenia">Hyparrhenia diplandra (GCA_015847255.1)</option>
+                            <option value="themeda">Themeda triandra (GCA_018135685.1)</option>
+                        </select>
+                    </label>
+                    <br><br>
+                    <label>
+                        <label for="hmm_query_id">Specify <strong style="color: darkred">Hidden Markov Models (HMMs)</strong> for gene family</label>
+                        <input type="text" name="hmm_query" placeholder="[HMM_name].hmm" class="form-control" id="hmm_query_id" style="height: 45px" required>
+                    </label>
+                    <br><br>
+                    <div style="text-align: center">
+                        <span style="margin: 0 10px">Sequence E-value threshold</span>
+                        <label style="margin: -5px 5px">
+                            <input type="text" name="sequence_evalue" value="10" class="form-control" style="width: 90px; height: 25px">
+                        </label>
+                        <span style="margin: 0 10px">Domain E-value threshold</span>
+                        <label style="margin: -5px 5px">
+                            <input type="text" name="domain_evalue" value="10" class="form-control" style="width: 90px; height: 25px">
+                        </label>
+                    </div>
+                    <br>
+                    <p class="bg-danger"><b style="color: white">{{ error_message }}</b></p>
+                    <a href="javascript:exampleList()" class="btn btn-default" style="height: 45px">
+                        <span class="glyphicon glyphicon-bookmark"></span>
+                        Show Example
+                    </a>
+                    <button id="submit_form" class="btn btn-primary" style="height: 45px">
+                        <span class="glyphicon glyphicon-hourglass"></span>
+                        Search Family Members
+                    </button>
+                    <br>
+                </form>
+                <div style="text-align: center">
+                    <hr>
+                    <a role="button" data-toggle="collapse" href="#collapseHmmList" aria-expanded="true" aria-controls="collapseHmmList">
+                        <h4><strong><span class="glyphicon glyphicon-menu-down"></span>
+                            Inspect information of all available HMMs</strong></h4>
+                    </a>
+                    <div class="collapse" id="collapseHmmList">
+                        <br>
+                        <p>Names of all protein HMMs catalogued in HEMU <strong>(Total: 19633 entries)</strong> <a href="{% static 'AllPageStatic/genefamily/pfam_hmm_list.txt' %}"><strong>Download</strong></a></p>
+                        <iframe src="{% static 'AllPageStatic/genefamily/pfam_hmm_list.txt' %}" frameborder="0" width="500px" height="500px"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div></div></div>
+{% endblock %}
+
+{% block javascript_block %}
+    <script>
+
+    // Fill example data
+    function exampleList() {
+        document.getElementById("hmm_query_id").value="WRKY.hmm";
+    }
+
+    </script>
+{% endblock %}

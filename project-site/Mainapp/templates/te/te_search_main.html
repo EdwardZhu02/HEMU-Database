@@ -1,0 +1,389 @@
+{% extends 'basemodel.html' %}
+
+{% block title_block %}
+    TE Expression - HEMU
+{% endblock %}
+
+{% block header_block %}
+    {% load static %}
+    <div class="col-sm-2">
+        <div style="margin-top: 10px; margin-left: -5px">
+            <img src="{% static "AllPageStatic/HEMU_logo_crop.png" %}" class="img-responsive" alt="Responsive image" style="width: 72px; height: 104px">
+        </div>
+    </div>
+    <div class="col-sm-10">
+        <h2 style="margin-top: 20px; margin-left: -70px">Transposable Elements <small>TE Expression</small></h2>
+        <p style="color: #8e8e8e; margin-left: -65px">Search here for TE expression data regarding <br>representative Andropogoneae species.</p>
+    </div>
+{% endblock %}
+
+{% block content_block %}
+    {% load static %}
+    <div class="container"><div class='row'><div class="col-md-12">
+        <div>
+            <!--Notification panel for submitted task-->
+            <div class="alert alert-success alert-dismissible" role="alert" style="display: none" id="div_main_notif">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <strong>TASK STATUS UPDATE:</strong> Task has been successfully submitted to the server backend, please wait and <strong>avoid repeated submission</strong>.
+            </div>
+
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" class="active"><a href="#stage1" aria-controls="stage1" role="tab" data-toggle="tab"><strong>Query by TE ID</strong></a></li>
+            <li role="presentation"><a href="#stage2" aria-controls="stage2" role="tab" data-toggle="tab"><strong>Query by sample accession ID</strong></a></li>
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content">
+            <div role="tabpanel" class="tab-pane active" id="stage1">
+                <!--Query by TE ID-->
+                <div class="panel panel-default">
+                    <div class="panel-heading" style="text-align: center">Query by <strong>TE FAMILY ID</strong></div>
+                    <div class="panel-body">
+                        <br>
+                        <div style="text-align: center; margin: 0 150px">
+                            <p>During our analysis, individual TEs are classified into families based on the <strong style="color: darkred">80-80-80 rule</strong> proposed by Wicker et al.</p>
+                            <p>That is, two elements belong to the same family if they share <strong>80% (or more) sequence identity</strong> in at least <strong>80% of their coding or internal domain, or within their terminal repeat regions</strong>, or in both.</p>
+                            <blockquote>
+                                <p><small>
+                                    Wicker, T., Sabot, F., Hua-Van, A., Bennetzen, J. L., Capy, P., Chalhoub, B., Flavell, A., Leroy, P., Morgante, M., Panaud, O., Paux, E., Sanmiguel, P., & Schulman, A. H. (2007). <strong>A unified classification system for eukaryotic transposable elements</strong>. Nature Reviews Genetics, 8(12), 973-982.
+                                </small></p>
+                            </blockquote>
+                            <p>TE families are nominated with a prefix of <code><strong>TE_</strong></code>. Individual TEs that <strong>cannot be classified into a single family were discarded</strong> due to their poor representativeness.</p>
+                        </div>
+                        <hr>
+                        <form method="post" style="text-align: center">
+                            <input type="hidden" name="form_section_id" value="2">
+                            <span id="helpBlock" class="help-block"><strong>Don't know which family your TE of interest belongs to? <a
+                                    href="{% url 'sequenceserver' %}">Take a BLAST</a></strong></span>
+                            <div class="input-group" style="margin: 0 150px;">
+                                {% csrf_token %}
+                                <span class="input-group-addon"><b>TE family ID</b></span><!--Text reminder before input-->
+                                <input type="text" name="te_query_teid" id="main_query_teid_id" class="form-control" placeholder="separate multiple queries with ;" style="height: 45px">
+                            </div>
+                            <br>
+                            <label>
+                                <select class="form-control" name="species_query" id="query_species_teid_id" style="height: 45px">
+                                    <option value="coix" selected>Coix lacryma-jobi var.lacryma-jobi (GCA_009763385.1)</option>
+                                    <option value="zea">Zea mays B73v4 (GCF_000005005.2)</option>
+                                    <option value="saccharum">Saccharum spontaneum (GCA_003544955.1)</option>
+                                    <option value="sorghum">Sorghum bicolor BTx623 (GCF_000003195.3)</option>
+                                    <option value="miscanthus">Miscanthus lutarioriparius (GCA_904845875.1)</option>
+                                    <option value="miscanthus_sine">Miscanthus sinensis (Phytozome v7.0)</option>
+                                </select>
+                            </label>
+                            <br>
+                            <label class="radio-inline">
+                                <input type="radio" name="optionsRadios" id="FPKM_chosen" value="FPKM" checked> in FPKM
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="optionsRadios" id="TPM_chosen" value="TPM"> in TPM
+                            </label>
+                            <br><br>
+                            <a href="javascript:exampleListTEID()" class="btn btn-default" style="height: 45px">
+                                <span class="glyphicon glyphicon-bookmark"></span>
+                                Show Example
+                            </a>
+                            <button id="submit_form1" class="btn btn-primary" style="height: 45px">
+                                <span class="glyphicon glyphicon-hourglass"></span>
+                                Search Expression Profile
+                            </button>
+                        </form>
+                    </div>
+                    <div style="text-align: center; margin: 0 150px">
+                        <p>FPKM / TPM were normalized using the <strong><b style="color: darkred">total number of reads</b> mapping to any individual in a given TE family</strong> and the <strong><b style="color: darkred">combined length</b> of all TE family members</strong>.</p>
+                    </div>
+                </div>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="stage2">
+                <!--Query by Accession Number-->
+                <div class="panel panel-default">
+                    <div class="panel-heading" style="text-align: center">Query by <strong>SAMPLE ID</strong></div>
+                    <div class="panel-body">
+                        <br>
+                        <form method="post" style="text-align: center">
+                            <input type="hidden" name="form_section_id" value="1">
+                            <div class="input-group" style="margin: 0 150px;">
+                                {% csrf_token %}
+                                <span class="input-group-addon"><b>Sample accession ID</b></span><!--Text reminder before input-->
+                                <input type="text" name="te_query_accession" id="main_query_sampleid_id" class="form-control" placeholder="separate multiple queries with ;" style="height: 45px">
+                            </div>
+                            <br>
+                            <label>
+                                <select class="form-control" name="species_query" id="query_species_sampleid_id" style="height: 45px">
+                                    <option value="coix" selected>Coix lacryma-jobi var.lacryma-jobi (GCA_009763385.1)</option>
+                                    <option value="zea">Zea mays B73v4 (GCF_000005005.2)</option>
+                                    <option value="saccharum">Saccharum spontaneum (GCA_003544955.1)</option>
+                                    <option value="sorghum">Sorghum bicolor BTx623 (GCF_000003195.3)</option>
+                                    <option value="miscanthus">Miscanthus lutarioriparius (GCA_904845875.1)</option>
+                                </select>
+                            </label>
+                            <br>
+                            <label class="radio-inline">
+                                <input type="radio" name="optionsRadios" id="FPKM_chosen" value="FPKM" checked> in FPKM
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="optionsRadios" id="TPM_chosen" value="TPM"> in TPM
+                            </label>
+                            <br><br>
+                            <a href="javascript:exampleListSampleID()" class="btn btn-default" style="height: 45px">
+                                <span class="glyphicon glyphicon-bookmark"></span>
+                                Show Example
+                            </a>
+                            <button id="submit_form2" class="btn btn-primary" style="height: 45px">
+                                <span class="glyphicon glyphicon-hourglass"></span>
+                                Search Expression Profile
+                            </button>
+                        </form>
+                    </div>
+                    <div style="text-align: center; margin: 0 150px">
+                        <p>FPKM / TPM were normalized using the <strong><b style="color: darkred">total number of reads</b> mapping to any individual in a given TE family</strong> and the <strong><b style="color: darkred">combined length</b> of all TE family members</strong>.</p>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+        <!--Pre-hidden loading animation-->
+        <div id="div_main_loader" class="loader" style="display: none"></div>
+
+        <!--Store pending task-ids awaiting AJAX validation-->
+        <div id="div_task_id" hidden>{{ task_id }}</div>
+    </div></div></div>
+    <!--by sample accession-->
+    {% for indv_query in query_sample_result_list %}
+        <div class='container'>
+            <div class='row'>
+                <div class="col-md-8">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">{{ indv_query }}: TE Expression Plots ({{ query_format }})</h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class="text-center">
+                                <iframe src="{% static 'Temp_R_TE/' %}{{ indv_query }}_plt_TE_superfamily.html"
+                                    width="700px" height= "350px" name="topFrame" frameborder="0"></iframe>
+                                <br>
+                                <a href="{% static 'Temp_R_TE/' %}{{ indv_query }}_plt_TE_superfamily.png">
+                                    <span class="glyphicon glyphicon-download"></span>
+                                    Download static image (.png)
+                                </a>
+                                <br>
+                                <iframe src="{% static 'Temp_R_TE/' %}{{ indv_query }}_plt_TE_group.html"
+                                    width="700px" height= "350px" name="topFrame" frameborder="0"></iframe>
+                                <br>
+                                <a href="{% static 'Temp_R_TE/' %}{{ indv_query }}_plt_TE_group.png">
+                                    <span class="glyphicon glyphicon-download"></span>
+                                    Download static image (.png)
+                                </a>
+                                <br><br>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">{{ indv_query }}: Fundamental Info</h3>
+                        </div>
+                        <div class="panel-body">
+                            <p>The left panel displays information regarding <strong>TE family expression status</strong> in the query sample. Family with similar properties is classified into different superfamilies.</p>
+                            <p>The HEMU TE portfolio for each species contains family expression data of <strong style="color: darkred;">LTR retrotransposons, TIR transposons, MITEs and Helitrons</strong>.</p>
+                            <hr>
+                            <h4>Nomination for TIR elements and MITEs</h4>
+                            <p>TIRs are classified into five major superfamilies (Feschotte and Pritham, 2007):</p>
+                            <pre>DTA (hAT) <br>DTC (CACTA) <br>DTH (PIF/Harbinger) <br>DTM (Mutator) <br>DTT(Tc1/Mariner)</pre>
+                            <p>MITEs are classified by TIRlearner as <strong>intact TIR elements shorter than 600 bp</strong>.</p>
+                            <hr>
+                            <h4>Raw data table download</h4>
+                            <p>Preview or download <strong>raw TE expression data table</strong> used to generate the plots.</p>
+                            <br>
+                            <div class="text-center">
+                                <a class="btn btn-info" href="javascript:previewCSV('{% static 'Temp_R_TE/' %}{{ indv_query }}_TEexpr.csv')">
+                                    <span class="glyphicon glyphicon-file"></span>
+                                    Preview
+                                </a>
+                                <a class="btn btn-default" href="{% static 'Temp_R_TE/' %}{{ indv_query }}_TEexpr.csv">
+                                    <span class="glyphicon glyphicon-download"></span>
+                                    Download table (.csv)
+                                </a>
+                            </div><!--<div class="text-center">-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+    <!--by TE family ID-->
+    {% for indv_query in query_teid_result_list %}
+        <div class='container'>
+            <div class='row'>
+                <div class="col-md-8"><div class="panel panel-info"><!--TE Expression plots-->
+                    <div class="panel-heading">
+                        <h3 class="panel-title">{{ indv_query.5 }}: TE expression plots ({{ query_format }})</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="text-center">
+                            <iframe src="{% static 'Temp_R_TE/' %}{{ indv_query.5 }}_plt_TE_famsample.html"
+                                width="700px" height= "300px" name="topFrame" frameborder="0"></iframe>
+
+                            <iframe src="{% static 'Temp_R_TE/' %}{{ indv_query.5 }}_plt_TE_famtissue.html"
+                                width="700px" height= "300px" name="topFrame" frameborder="0"></iframe>
+                        </div>
+                    </div>
+                </div></div>
+                <div class="col-md-4"><div class="panel panel-info"><!--Fundamental info-->
+                    <div class="panel-heading">
+                        <h3 class="panel-title">{{ indv_query.5 }}: Fundamental info ({{ query_format }})</h3>
+                    </div>
+                    <div class="panel-body">
+                        <br>
+                        <ul class="list-group">
+                            <li class="list-group-item">TE family ID: <b style="color: #ff1e3a">{{ indv_query.5 }}</b></li>
+                            <li class="list-group-item">Detected in <b style="color: #ff1e3a">{{ indv_query.4 }}/{{ indv_query.3 }}</b> samples <b style="color: #ff1e3a">({% widthratio indv_query.4 indv_query.3 100 %}%)</b></li>
+                            <li class="list-group-item">Max {{ query_format }}: <b>{{ indv_query.2|floatformat:2 }}</b></li>
+                            <li class="list-group-item">Min {{ query_format }}: <b>{{ indv_query.0|floatformat:2 }}</b></li>
+                            <li class="list-group-item">Median {{ query_format }}: <b style="color: #ff1e3a">{{ indv_query.1|floatformat:2 }}</b></li>
+                        </ul>
+                        <div class="text-center">
+                            <p><small>The standard of an expressed TE family is set to be TPM or FPKM>1</small></p>
+                        </div>
+                        <hr>
+                        <h4>Raw data table download</h4>
+                        <p>Preview or download <strong>raw TE expression data table</strong> used to generate the plots.</p>
+                        <br>
+                        <div class="text-center">
+                            <a class="btn btn-info" href="javascript:previewCSV('{% static 'Temp_R_TE/' %}{{ indv_query.5 }}_TEexpr.csv')">
+                                <span class="glyphicon glyphicon-file"></span>
+                                Preview
+                            </a>
+                            <a class="btn btn-default" href="{% static 'Temp_R_TE/' %}{{ indv_query.5 }}_TEexpr.csv">
+                                <span class="glyphicon glyphicon-download"></span>
+                                Download table (.csv)
+                            </a>
+                        </div><!--<div class="text-center">-->
+                    </div><!--<div class="panel-body">-->
+                </div></div>
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}
+
+{% block footer_script_block %}
+    <script>
+    // Set up django CSRF verification mechanism
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // Set up django CSRF verification mechanism
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+
+    // Set up AJAX
+    $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            const csrftoken = getCookie('csrftoken');
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    })
+
+    // Evaluate if a pending task is to be submitted
+    var task_id_global = undefined
+
+    // Fill example data
+    function exampleListTEID() {
+        // const species = $("#query_species_teid_id option:selected").val();
+        document.getElementById("main_query_teid_id").value="TE_00000100";
+    }
+    function exampleListSampleID() {
+        const species = $("#query_species_sampleid_id option:selected").val();
+        switch (species) {
+            case 'coix':
+                document.getElementById("main_query_sampleid_id").value="SRR9112542";
+                break;
+            case 'zea':
+                document.getElementById("main_query_sampleid_id").value="SRR1030985";
+                break;
+            case 'sorghum':
+                //document.getElementById("main_query_sampleid_id").value="SORBI_3004G336700";
+                break;
+            case 'saccharum':
+                //document.getElementById("main_query_sampleid_id").value="Sspon.01G0001860-1A";
+                break;
+            case 'miscanthus':
+                //document.getElementById("main_query_sampleid_id").value="Ml01G000100";
+                break;
+        }
+    }
+
+    // Preview CSV table
+    function previewCSV(path_to_CSV){
+        Papa.parse(path_to_CSV, {
+            download: true,
+            complete: function(results) {
+                Heiho(results.data);
+            }
+        });
+    }
+
+    $(window).on('load', function (){
+        var loader_div = document.getElementById('div_main_loader')
+        var notif_panel_div = document.getElementById('div_main_notif')
+        // loader_div.style.display = 'none'
+        var taskId = $("#div_task_id").html()
+        if(taskId == null || taskId.length === 0){
+            // no task pending
+        }else {
+            // task executing
+            // console.log("Task " + taskId)
+            task_id_global = taskId
+            loader_div.style.display = 'block'
+            notif_panel_div.style.display = 'block'
+            document.getElementById("submit_form1").disabled=true // disable form submission
+            document.getElementById("submit_form2").disabled=true // disable form submission
+            loop_get_taskstatus()
+        }
+    })
+
+    function loop_get_taskstatus() {
+        var taskId = task_id_global
+        //Send GET AJAX request every 5 seconds, querying for task status
+        setTimeout(loop_get_taskstatus,5*1000)
+
+        $.ajax({
+            url: '{% url 'async_progress_query' %}?taskid=' + taskId,
+            type: 'get',
+            dataType: 'json',
+            success: function (json_data) {
+                var taskResult = eval(json_data)
+                var taskStatus = taskResult['state']
+                console.log(taskStatus)
+
+                if(taskStatus === 'SUCCESS') {
+                    location.href='{% url 'te_expression' %}?success=1&taskid=' + taskId
+                }
+                if(taskStatus === 'FAILURE') {
+                    location.href='{% url 'te_expression' %}?success=0&taskid=' + taskId
+                }
+            }
+        })
+    }
+    </script>
+{% endblock %}

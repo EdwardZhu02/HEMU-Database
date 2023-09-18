@@ -1,0 +1,228 @@
+{% extends 'basemodel.html' %}
+
+{% block title_block %}
+    Gene Functional Annotation - HEMU
+{% endblock %}
+
+{% block header_block %}
+    {% load static %}
+    <div class="col-sm-2">
+        <div style="margin-top: 10px; margin-left: -5px">
+            <img src="{% static "AllPageStatic/HEMU_logo_crop.png" %}" class="img-responsive" alt="Responsive image" style="width: 72px; height: 104px">
+        </div>
+    </div>
+    <div class="col-sm-10">
+        <h2 style="margin-top: 20px; margin-left: -70px">Functional Annotation</h2>
+        <p style="color: #8e8e8e; margin-left: -65px">Search gene functional annotation data regarding <br>representative Andropogoneae species.</p>
+    </div>
+{% endblock %}
+
+{% block content_block %}
+    {% load static %}
+    <div class="container"><div class='row'><div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading" style="text-align: center">Genome analysis toolkit: <strong>Gene Functional Annotation Search</strong></div>
+            <div class="panel-body">
+                <br>
+                <form method="post" id="gene_expression_query_mainform" style="text-align: center">
+                    {% csrf_token %}
+                    <p>Search gene functional annotation among all RNA-seq samples catalogued in HEMU
+                        <br>using unique <strong style="color: darkred;">GENE ID</strong> for each genome.</p>
+                    <label>
+                        <input type="text" name="main_query" placeholder="separate multiple queries with ;" class="form-control" id="main_query_id" style="width: 550px; height: 45px" required>
+                    </label>
+                    <label>
+                        <select class="form-control" name="query_species" id="query_species_id" style="height: 45px">
+                            <option value="coix" selected>Coix lacryma-jobi var.lacryma-jobi (GCA_009763385.1)</option>
+                            <option value="zea">Zea mays B73v4 (GCF_000005005.2)</option>
+                            <option value="saccharum">Saccharum spontaneum (GCA_003544955.1)</option>
+                            <option value="sorghum">Sorghum bicolor BTx623 (GCF_000003195.3)</option>
+                            <option value="miscanthus">Miscanthus lutarioriparius (GCA_904845875.1)</option>
+                            <option value="miscanthus_sine">Miscanthus sinensis (Phytozome v7.0)</option>
+                            <option value="chrysopogon">Chrysopogon serrulatus (GCA_015844335.1)</option>
+                            <option value="hyparrhenia">Hyparrhenia diplandra (GCA_015847255.1)</option>
+                            <option value="themeda">Themeda triandra (GCA_018135685.1)</option>
+                        </select>
+                    </label>
+                    <br><br>
+                    <p class="bg-danger"><b style="color: white">{{ error_message }}</b></p>
+                    <a href="javascript:exampleList()" class="btn btn-default" style="height: 45px">
+                        <span class="glyphicon glyphicon-bookmark"></span>
+                        Show Example
+                    </a>
+                    <button id="submit_form" class="btn btn-primary" style="height: 45px">
+                        <span class="glyphicon glyphicon-hourglass"></span>
+                        Search Gene Function
+                    </button>
+                    <br>
+                </form>
+            </div>
+        </div>
+        <!--Pre-hidden loading animation-->
+        <div id="div_main_loader" class="loader" style="display: none"></div>
+    </div></div></div>
+
+    <!--Content displayer-->
+    <div class='container' id="content_table_div" style="display: none"><div class='row'><div class="col-md-12">
+        <br>
+        <table class="table table-hover">
+            <!--gene_transcript_name, description, GOterm, KEGG_kterm, KEGG_pathway-->
+            <caption><h3>Gene function query: result</h3></caption>
+            <thead>
+                <tr>
+                    <th>gene ID</th>
+                    <th>canonical transcript ID</th>
+                    <th>function description</th>
+                    <th>GO term</th>
+                    <th>KEGG term</th>
+                    <th>KEGG pathway term</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            <!--[gene_name, primary_transcript_name, description, GOterm, KEGG_kterm, KEGG_pathway]-->
+            {% for indv_query in query_annotation_list_full %}
+                <tr>
+                <td>{{ indv_query.0 }}</td>
+                <td>{{ indv_query.1 }}</td>
+                <td style="word-wrap:break-word;word-break:break-all;">{{ indv_query.2 }}</td>
+                <td style="word-wrap:break-word;word-break:break-all;">{{ indv_query.3 }}</td>
+                <td style="word-wrap:break-word;word-break:break-all;">{{ indv_query.4 }}</td>
+                <td style="word-wrap:break-word;word-break:break-all;">{{ indv_query.5 }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+
+        </table>
+    </div></div></div>
+
+    <!--Store pending task-ids awaiting AJAX validation-->
+    <div id="div_task_id" hidden>{{ task_id }}</div>
+    <!--Control display of the output table-->
+    <div id="div_show_table_id" hidden>{{ flag_showtable }}</div>
+
+{% endblock %}
+
+{% block footer_script_block %}
+    <script>
+    // Set up django CSRF verification mechanism
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // Set up django CSRF verification mechanism
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+
+    // Set up AJAX
+    $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            const csrftoken = getCookie('csrftoken');
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    })
+
+    // Evaluate if a pending task is to be submitted
+    var task_id_global = undefined
+
+    // Fill example data
+    function exampleList() {
+        const species = $("#query_species_id option:selected").val();
+        switch (species) {
+            case 'coix':
+                document.getElementById("main_query_id").value="Cl017000;Cl017097;Cl017258";
+                break;
+            case 'zea':
+                document.getElementById("main_query_id").value="Zm00001d023520";
+                break;
+            case 'sorghum':
+                document.getElementById("main_query_id").value="SORBI_3004G336700";
+                break;
+            case 'saccharum':
+                document.getElementById("main_query_id").value="Sspon.01G0001010-1A";
+                break;
+            case 'miscanthus':
+                document.getElementById("main_query_id").value="Ml01G000450";
+                break;
+            case 'miscanthus_sine':
+                document.getElementById("main_query_id").value="Misin01G021700";
+                break;
+        }
+    }
+
+    // Preview CSV table
+    function previewCSV(path_to_CSV){
+        Papa.parse(path_to_CSV, {
+            download: true,
+            complete: function(results) {
+                Heiho(results.data);
+            }
+        });
+    }
+
+    $(window).on('load', function (){
+        var loader_div = document.getElementById('div_main_loader')
+        // loader_div.style.display = 'none'
+        var taskId = $("#div_task_id").html()
+        if(taskId == null || taskId.length === 0){
+            // no task pending
+        }else {
+            // task executing
+            // console.log("Task " + taskId)
+            task_id_global = taskId
+            loader_div.style.display = 'block'
+            document.getElementById("submit_form").disabled=true // disable form submission
+            loop_get_taskstatus()
+        }
+
+        var isDisplayTable = $("#div_show_table_id").html()
+        if(isDisplayTable == null || isDisplayTable.length === 0){
+            // do not display table
+        }else {
+            // results present, display table
+            var content_table_div = document.getElementById('content_table_div')
+            content_table_div.style.display = 'block'
+        }
+    })
+
+    function loop_get_taskstatus() {
+        var taskId = task_id_global
+        //Send GET AJAX request every 2 seconds, querying for task status
+        setTimeout(loop_get_taskstatus,2*1000)
+
+        $.ajax({
+            url: '{% url 'async_progress_query' %}?taskid=' + taskId,
+            type: 'get',
+            dataType: 'json',
+            success: function (json_data) {
+                var taskResult = eval(json_data)
+                var taskStatus = taskResult['state']
+                console.log(taskStatus)
+
+                if(taskStatus === 'SUCCESS') {
+                    location.href='{% url 'genome_gene_function' %}?success=1&taskid=' + taskId
+                }
+                if(taskStatus === 'FAILURE') {
+                    location.href='{% url 'genome_gene_function' %}?success=0&taskid=' + taskId
+                }
+            }
+        })
+    }
+    </script>
+{% endblock %}

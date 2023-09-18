@@ -1,0 +1,3 @@
+sample_id	sample_tissue	sample_project_number	sample_antibody	sample_description
+ERR1692140	no_label	PRJEB15858	Centromere	Sugarcane centromere ChIP-seq
+ERR5037473	no_label	PRJEB42327	CenH3	LA_Purple_CenH3-ChIP

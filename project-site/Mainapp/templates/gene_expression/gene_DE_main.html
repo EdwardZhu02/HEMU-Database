@@ -1,0 +1,141 @@
+{% extends 'basemodel.html' %}
+
+{% block title_block %}
+    Gene DE Analysis Module - HEMU
+{% endblock %}
+
+{% block header_block %}
+    {% load static %}
+    <div class="col-sm-2">
+        <div style="margin-top: 10px; margin-left: -5px">
+            <img src="{% static "AllPageStatic/HEMU_logo_crop.png" %}" class="img-responsive" alt="Responsive image" style="width: 72px; height: 104px">
+        </div>
+    </div>
+    <div class="col-sm-10">
+        <h2 style="margin-top: 20px; margin-left: -70px">Differential Gene Expression Analysis</h2>
+        <p style="color: #8e8e8e; margin-left: -65px">Generate publish-level DGE reports within a click<br>in representative Andropogoneae species.</p>
+    </div>
+{% endblock %}
+
+{% block content_block %}
+    {% load static %}
+    <div class="container">
+        <div class='row'>
+            <div class="col-md-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading" style="text-align: center">Transcriptome analysis toolkit: <strong>Differential Gene Expression (DGE) Analysis</strong></div>
+                    <div class="panel-body">
+                        <br>
+                        <form method="post" class="form">
+                            {% csrf_token %}
+                            <div style="text-align: center;"><label>Select species</label></div>
+                            <div style="margin: 0 200px">
+                                <select class="form-control" name="species_query" id="query_species_id" style="height: 45px">
+                                    <option value="coix" selected>Coix lacryma-jobi var.lacryma-jobi (GCA_009763385.1)</option>
+                                    <option value="zea">Zea mays B73v4 (GCF_000005005.2)</option>
+                                    <option value="saccharum">Saccharum spontaneum (GCA_003544955.1)</option>
+                                    <option value="sorghum">Sorghum bicolor BTx623 (GCF_000003195.3)</option>
+                                    <option value="miscanthus">Miscanthus lutarioriparius (GCA_904845875.1)</option>
+                                    <option value="miscanthus_sine">Miscanthus sinensis (Phytozome v7.0)</option>
+                                    <option value="themeda">Themeda triandra (GCA_018135685.1)</option>
+                                </select>
+                            </div>
+                            <br><br>
+                            <div style="text-align: center">
+                                <span style="margin: 0 10px">logFC threshold</span>
+                                <label style="margin: -5px 5px">
+                                    <input type="text" name="logfc_threshold" value="2.0" class="form-control" style="width: 90px; height: 25px">
+                                </label>
+                                <span style="margin: 0 10px">P value threshold</span>
+                                <label style="margin: -5px 5px">
+                                    <input type="text" name="pvalue_threshold" value="0.05" class="form-control" style="width: 90px; height: 25px">
+                                </label>
+                                <span style="margin: 0 10px";>Top DE genes in heatmap</span>
+                                <label style="margin: -5px 5px">
+                                    <input type="text" name="heatmap_gene_count" value="50" class="form-control" style="width: 90px; height: 25px">
+                                </label>
+                            </div>
+                            <div style="text-align: center">
+                                <br><a href="#">View sample catalog</a><br>
+                                <HR style= "width: 80%" SIZE = 3>
+                            </div>
+                              <h4 style="text-align: center">——<b> GROUP 1 </b>——</h4>
+                              <div class="input-group" style="margin: 0 100px;">
+                                    <span class="input-group-addon"><b>Samples</b></span>
+                                    <input type="text" name="group1_samples" id="group1_samples_id" class="form-control" placeholder="separate multiple samples with ' ; '" size="50px 30px" required>
+
+                                    <span class="input-group-addon"><b>Group Name</b></span>
+                                    <input type="text" name="group1_name" id="group1_name_id" class="form-control" value="treatment" required>
+                              </div>
+                              <br><br>
+
+                              <h4 style="text-align: center">——<b> GROUP 2 </b>——</h4>
+                              <div class="input-group" style="margin: 0 100px;">
+                                    <span class="input-group-addon"><b>Samples</b></span>
+                                    <input type="text" name="group2_samples" id="group2_samples_id" class="form-control" placeholder="separate multiple samples with ' ; '" size="50px 30px" required>
+
+                                    <span class="input-group-addon"><b>Group Name</b></span>
+                                    <input type="text" name="group2_name" id="group2_name_id" class="form-control" value="control" required>
+                              </div>
+                              <br><br><br>
+
+                              <div style="text-align: center">
+                                    <a href="javascript:exampleList()" class="btn btn-default" style="height: 45px">
+                                        <span class="glyphicon glyphicon-bookmark"></span>
+                                        Show Example
+                                    </a>
+                                    <button type="submit" class="btn btn-primary" style="height: 45px">
+                                        <span class="glyphicon glyphicon-hourglass"></span>
+                                        Start DGE Analysis: submit task to queue
+                                    </button>
+                              </div>
+
+                        </form>
+                    </div>
+                </div>
+                <!--<div class="panel panel-default">
+                    <div class="panel-body">
+                        <h4 style="text-align: center">Or, claim existing DGE reports using the provided identifier</h4>
+                        <br>
+                        <form method="post" style="text-align: center">
+                            <label>
+                                <input type="text" name="identifier_query" placeholder="identifier:" class="form-control" style="width: 550px; height: 35px">
+                            </label>
+                            <input type="submit" value="Claim" class="btn btn-primary" style="width: 100px; height: 35px">
+                        </form>
+                    </div>
+                </div>-->
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block footer_script_block %}
+    <script>
+    // Set up example
+    function exampleList() {
+            const species = $("#query_species_id option:selected").val();
+            switch (species) {
+                case 'coix':
+                    document.getElementById("group1_samples_id").value="SRR10208252;SRR10208253;SRR10208254";
+                    document.getElementById("group1_name_id").value="seed";
+                    document.getElementById("group2_samples_id").value="SRR10208255;SRR10208256;SRR10208257";
+                    document.getElementById("group2_name_id").value="root";
+                    break;
+                case 'zea':
+                    document.getElementById("group1_samples_id").value="SRR6781956;SRR6781957;SRR6781958";
+                    document.getElementById("group1_name_id").value="stage2_sheath";
+                    document.getElementById("group2_samples_id").value="SRR6781952;SRR6781953;SRR6781954";
+                    document.getElementById("group2_name_id").value="stage5_sheath";
+                    break;
+                case 'sorghum':
+                    document.getElementById("main_query_id").value="SORBI_3004G336700";
+                    break;
+                case 'saccharum':
+                    break;
+                case 'miscanthus':
+                    break;
+            }
+        }
+    </script>
+{% endblock %}

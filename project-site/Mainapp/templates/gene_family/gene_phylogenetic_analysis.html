@@ -1,0 +1,124 @@
+{% extends 'basemodel.html' %}
+
+{% block title_block %}
+    Gene family phylogenetic analysis - HEMU
+{% endblock %}
+
+{% block header_block %}
+    {% load static %}
+    <div class="col-sm-2">
+        <div style="margin-top: 10px; margin-left: -5px">
+            <img src="{% static "AllPageStatic/HEMU_logo_crop.png" %}" class="img-responsive" alt="Responsive image" style="width: 72px; height: 104px">
+        </div>
+    </div>
+    <div class="col-sm-10">
+        <h2 style="margin-top: 20px; margin-left: -70px">Phylogenetic Analysis</h2>
+        <p style="color: #8e8e8e; margin-left: -65px">Perform multiple sequence alignment and phylogenetic tree construction
+            <br>using Neighbour-Joining algorithm</p>
+    </div>
+{% endblock %}
+
+{% block content_block %}
+    <div class='container'><div class='row'><div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading" style="text-align: center">Gene family analysis toolkit: <strong>Phylogenetic Analysis</strong></div>
+            <div class="panel-body">
+                <div class="bg-danger" style="text-align: center"><b style="color: white">{{ error_message }}</b></div>
+                <form method="post" style="text-align: center">
+                    {% csrf_token %}
+                    <div class="col-sm-6"><!--options panel-->
+                        <div class="col-sm-12">
+                            <label for="query_species_id">Species select (if query by gene ID)</label>
+                            <select class="form-control" name="query_species" id="query_species_id" style="height: 45px">
+                                <option value="coix">Coix lacryma-jobi var.lacryma-jobi (GCA_009763385.1)</option>
+                                <option value="zea">Zea mays B73v4 (GCF_000005005.2)</option>
+                                <option value="saccharum">Saccharum spontaneum (GCA_003544955.1)</option>
+                                <option value="sorghum">Sorghum bicolor BTx623 (GCF_000003195.3)</option>
+                                <option value="miscanthus" selected>Miscanthus lutarioriparius (GCA_904845875.1)</option>
+                                <option value="miscanthus_sine">Miscanthus sinensis (Phytozome v7.0)</option>
+                                <option value="chrysopogon">Chrysopogon serrulatus (GCA_015844335.1)</option>
+                                <option value="hyparrhenia">Hyparrhenia diplandra (GCA_015847255.1)</option>
+                                <option value="themeda">Themeda triandra (GCA_018135685.1)</option>
+                            </select>
+                            <br>
+                            <label for="query_seqtype_id">Sequence type to use</label>
+                            <select class="form-control" name="query_seqtype" id="query_seqtype_id" style="height: 45px">
+                                <option value="protein" selected>Protein sequence (recommended)</option>
+                                <option value="dna">Nucleotide sequence</option>
+                            </select>
+                            <br>
+                            <p>When both <strong>gene IDs and nucleotide sequence</strong> are provided as query, HEMU use <strong style="color: darkred;">primary CDS</strong> from each gene for phylogenetic analysis, considering sequence distance between gene and transcript sequences may be too large.</p>
+                            <hr>
+                            <label style="text-align: left">
+                                <span>Multiple sequence alignment</span>
+                                <select class="form-inline" name="query_msa_method" id="query_msa_method_id">
+                                    <option value="ClustalW" selected>ClustalW (default)</option>
+                                    <option value="ClustalOmega">ClustalOmega</option>
+                                    <option value="Muscle">Muscle</option>
+                                </select>
+                                <br><br>
+                                <span>Sequence pairwise distance</span>
+                                <select class="form-inline" name="query_pairwise_dist_method" id="query_pairwise_dist_method_id">
+                                    <option value="K80" selected>Kimura-2P/K80 (default)</option>
+                                </select>
+                                <br><br>
+                                <span>Phylogenetic tree layout</span>
+                                <select class="form-inline" name="query_tree_layout_method" id="query_tree_layout_method_id">
+                                    <option value="rectangular" selected>rectangular (default)</option>
+                                    <option value="slanted">slanted</option>
+                                    <option value="circular">circular</option>
+                                </select>
+                            </label>
+                            <br>
+                            <hr>
+                            <label for="query_bootstrap_rep_num_id">Number of bootstrap replicates</label>
+                            <input type="text" name="query_bootstrap_rep_num" id="query_bootstrap_rep_num_id" value="500" class="form-control">
+                            <br><br>
+                            <a class="btn btn-default" href="javascript:exampleList()">
+                                <span class="glyphicon glyphicon-bookmark"></span>
+                                Show Examples
+                            </a>
+                            <button id="submit_form" class="btn btn-primary">
+                                <span class="glyphicon glyphicon-hourglass"></span>
+                                Analyze: submit task to queue
+                            </button>
+                            <br><br>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <label for="query_sequence_id">Sequence input<strong style="color: darkred">(FASTA format or species-specific gene ID)</strong>
+                            <br> protein sequences are recommended for best hierarchical relationship outputs.</label>
+                        <textarea class="form-control" rows="28" cols="50" name="query_sequence" id="query_sequence_id" required></textarea>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div></div></div>
+{% endblock %}
+
+{% block footer_script_block %}
+    <script>
+        function exampleList() {
+            const species = $("#query_species_id option:selected").val();
+            switch (species) {
+                case 'miscanthus':
+                    document.getElementById("query_sequence_id").value="Ml01G012090\n\
+Ml01G049270\n\
+Ml01G055170\n\
+Ml02G012380\n\
+Ml02G049440\n\
+Ml02G056320\n\
+Ml03G010900\n\
+Ml03G056280\n\
+Ml04G011330\n\
+Ml07G016270\n\
+Ml08G015850\n\
+Ml11G017360\n\
+Ml12G016900\n\
+Ml12G017030\n\
+Ml14G004990\n\
+Ml15G001710";
+            }
+        }
+    </script>
+{% endblock %}

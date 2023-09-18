@@ -1,0 +1,58 @@
+{% extends 'basemodel.html' %}
+
+{% block title_block %}
+    Gene family phylogenetic analysis - HEMU
+{% endblock %}
+
+{% block header_block %}
+    {% load static %}
+    <div class="col-sm-2">
+        <div style="margin-top: 10px; margin-left: -5px">
+            <img src="{% static "AllPageStatic/HEMU_logo_crop.png" %}" class="img-responsive" alt="Responsive image" style="width: 72px; height: 104px">
+        </div>
+    </div>
+    <div class="col-sm-10">
+        <h2 style="margin-top: 20px; margin-left: -70px">Phylogenetic Analysis</h2>
+        <p style="color: #8e8e8e; margin-left: -65px">Perform multiple sequence alignment and phylogenetic tree construction
+            <br>using Neighbour-Joining algorithm</p>
+    </div>
+{% endblock %}
+
+{% block content_block %}
+    <div class="container"><div class='row'><div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading" style="text-align: center">Phylogenetic Analysis: Result</div>
+            <div class="panel-body">
+                    <div class="text-center">
+                        <br><br>
+                        <p><strong>Figure 1: </strong>Heatmap of sequence pairwise distances</p>
+                        <img src="{% static 'Temp_R_genefam/' %}{{ result_folder_name }}/dist_heatmap.png"
+                                class="img-thumbnail" alt="Cinque Terre" width="700px" height="700px">
+                        <br><br>
+                        <a href="{% static 'Temp_R_genefam/' %}{{ result_folder_name }}/dist_heatmap.png" class="btn btn-default">
+                            <span class="glyphicon glyphicon-download"></span>
+                            Download static image (.png)
+                        </a>
+                        <br><br><br>
+                        <p><strong>Figure 2: </strong>Phylogenic tree</p>
+                        <p>The tree is constructed with Neighbour-Joining algorithm following bootstrap test validation.</p>
+                        <p>Numbers near each node (in dark red) represent <strong style="color: darkred">converted bootstrap value</strong> to fit the 100-replicate standard.</p>
+                        <img src="{% static 'Temp_R_genefam/' %}{{ result_folder_name }}/phylotree_nj.png"
+                                class="img-thumbnail" alt="Cinque Terre" width="1000px" height="700px">
+                        <br><br>
+                        <a href="{% static 'Temp_R_genefam/' %}{{ result_folder_name }}/phylotree_nj.png" class="btn btn-default">
+                            <span class="glyphicon glyphicon-download"></span>
+                            Download static image (.png)
+                        </a>
+                        <a href="{% static 'Temp_R_genefam/' %}{{ result_folder_name }}/phylotree_nj.nwk" class="btn btn-primary">
+                            <span class="glyphicon glyphicon-download"></span>
+                            Download editable tree (.nwk)
+                        </a>
+                        <br><br>
+                        <p>Or, if you want to obtain the original query sequences for the task,</p>
+                        <a href="{% static 'Temp_R_genefam/' %}{{ result_folder_name }}/seq_original.fasta">Download original sequence (.fasta)</a>
+                    </div>
+                </div>
+        </div>
+    </div></div></div>
+{% endblock %}

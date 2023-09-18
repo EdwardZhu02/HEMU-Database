@@ -1,0 +1,48 @@
+{% extends 'basemodel.html' %}
+
+{% block title_block %}
+    TE Insertion Density Visualizer - HEMU
+{% endblock %}
+
+{% block header_block %}
+    {% load static %}
+    <div class="col-sm-2">
+        <div style="margin-top: 10px; margin-left: -5px">
+            <img src="{% static "AllPageStatic/HEMU_logo_crop.png" %}" class="img-responsive" alt="Responsive image" style="width: 72px; height: 104px">
+        </div>
+    </div>
+    <div class="col-sm-10">
+        <h2 style="margin-top: 20px; margin-left: -70px">Transposable Elements <small>Chromosomal TE Insertion Density Visualizer</small></h2>
+        <p style="color: #8e8e8e; margin-left: -65px">Generate customizable TE chromosomal insertion atlas taking advantage of an
+                <br>interactive R::shiny analysis module.</p>
+    </div>
+{% endblock %}
+
+{% block content_block %}
+    {% load static %}
+    <div class="loader-text">
+        <div class="text-center">
+        <strong>Loading R::shiny instance, please wait...</strong>
+        <HR style= "width: 80%" SIZE = 3>
+    </div>
+    </div>
+    <div class="loader">Loading..</div>
+    <div style="text-align: center; margin: 0 50px">
+        <iframe src="https://shijunpenglab.com/shinyserver/te_distribution/" id="shiny_iframe"
+        width="100%" height= "750px" name="topFrame" frameborder="0"></iframe>
+    </div>
+{% endblock %}
+{% block footer_script_block %}
+    <script>
+        // fade out the loader animation when shiny app is completely loaded
+        $(window).on('load', function (){
+            $('.loader').fadeOut()
+            $('.loader-text').fadeOut()
+        });
+
+        // resize iframe dynamically based on its height
+        function resizeIframe(obj) {
+			obj.style.height = obj.contentWindow.document.body.scrollHeight + 'px';
+		}
+    </script>
+{% endblock %}

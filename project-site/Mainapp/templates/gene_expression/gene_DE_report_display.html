@@ -1,0 +1,217 @@
+{% extends 'basemodel.html' %}
+
+{% block title_block %}
+    Gene DE Analysis Module - HEMU
+{% endblock %}
+
+{% block header_block %}
+    {% load static %}
+    <div class="col-sm-2">
+        <div style="margin-top: 10px; margin-left: -5px">
+            <img src="{% static "AllPageStatic/HEMU_logo_crop.png" %}" class="img-responsive" alt="Responsive image" style="width: 72px; height: 104px">
+        </div>
+    </div>
+    <div class="col-sm-10">
+        <h2 style="margin-top: 20px; margin-left: -70px">Differential Gene Expression Analysis</h2>
+        <p style="color: #8e8e8e; margin-left: -65px">Generate publish-level DGE reports within a click<br>in representative Andropogoneae species.</p>
+    </div>
+{% endblock %}
+
+{% block content_block %}
+    {% load static %}
+    <div class='container'>
+        <div class='row'>
+
+            <div class="col-md-12">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+
+                        <h2 class="text-center"><strong>Section 1: </strong>Project Summary</h2>
+                        <HR style= "width: 80%" SIZE = 3>
+                        <!--h4 class="text-center">Project Unique Identifier: <b style="color: darkred">{{ task_destination_folder }}</b></h4-->
+                        <br>
+                        <h4 class="text-center"><b>Species:</b> <b style="color: darkred">{{ species_query }}</b></h4>
+                        <br>
+                        <h4 class="text-center"><b>Group 1:</b> <b style="color: darkred">{{ group1_name }}</b></h4>
+                        <div class="text-center"><strong>Sample accession list:</strong> <samp>{{ group1_samples_list }}</samp></div>
+                        <br>
+                        <h4 class="text-center"><b>Group 2:</b> <b style="color: darkred">{{ group2_name }}</b></h4>
+                        <div class="text-center"><strong>Sample accession list:</strong> <samp>{{ group2_samples_list }}</samp></div>
+
+                        <br><br><br>
+                        <HR style= "width: 80%" SIZE = 3>
+                        <div>
+                            <p class="text-center"><strong>Table 1: </strong>CSV-format table of raw gene expression levels in specified samples. (TPM)</p>
+                        </div>
+                        <div class="text-center">
+                            <a href="javascript:previewCSV('{% static 'Temp_R_DEprojects/' %}{{ task_destination_folder }}/raw_exp_values.csv')" class="btn btn-info" style="height: 45px">
+                                <span class="glyphicon glyphicon-file"></span>
+                                Preview table online
+                            </a>
+                            <a class="btn btn-default" href="{% static 'Temp_R_DEprojects/' %}{{ task_destination_folder }}/raw_exp_values.csv">
+                                <span class="glyphicon glyphicon-download"></span>
+                                Download table (.csv)
+                            </a>
+                        </div>
+                        <br>
+                        <div>
+                            <p class="text-center"><strong>Table 2: </strong>CSV-format table of differentially-expressed genes between groups.
+                                <br>(with detailed parameters)</p>
+                        </div>
+                        <div class="text-center">
+                            <a href="javascript:previewCSV('{% static 'Temp_R_DEprojects/' %}{{ task_destination_folder }}/differential_gene.csv')" class="btn btn-info" style="height: 45px">
+                                <span class="glyphicon glyphicon-file"></span>
+                                Preview table online
+                            </a>
+                            <a class="btn btn-default" href="{% static 'Temp_R_DEprojects/' %}{{ task_destination_folder }}/differential_gene.csv">
+                                <span class="glyphicon glyphicon-download"></span>
+                                Download table (.csv)
+                            </a>
+                        </div>
+                        <HR style= "width: 80%" SIZE = 3>
+                        <br>
+
+                        <h2 class="text-center"><strong>Section 2: </strong>Analysis and Statistical Results</h2>
+                        <HR style= "width: 80%" SIZE = 3>
+                        <br>
+                        <h3 class="text-left"><strong>2.1</strong> Overview & Normalization of Expression Data</h3>
+                        <br>
+                        <div>
+                            <p class="text-center"><strong>Figure 1: </strong>Sample TPM distribution before and after normalization.</p>
+                        </div>
+                        <div class="text-center">
+                            <img src="{% static 'Temp_R_DEprojects/' %}{{ task_destination_folder }}/boxplot_beforenorm.png"
+                                class="img-thumbnail" alt="Cinque Terre" width="350px" height="350px">
+
+                            <img src="{% static 'Temp_R_DEprojects/' %}{{ task_destination_folder }}/boxplot_afternorm.png"
+                                class="img-thumbnail" alt="Cinque Terre" width="350px" height="350px">
+                            <br><br>
+                            <a class="btn btn-info" href="static/{{ task_destination_folder }}/boxplot_beforenorm.html;ht=400;wid=400">
+                                <span class="glyphicon glyphicon-file"></span>
+                                View interactive plot - before normalization
+                            </a>
+                            <a class="btn btn-info" href="static/{{ task_destination_folder }}/boxplot_afternorm.html;ht=400;wid=400">
+                                <span class="glyphicon glyphicon-file"></span>
+                                View interactive plot - after normalization
+                            </a>
+                            <br><br>
+                            <a class="btn btn-default" href="{% static 'Temp_R_DEprojects/' %}{{ task_destination_folder }}/boxplot_afternorm.png">
+                                <span class="glyphicon glyphicon-download"></span>
+                                Download static image (.png)
+                            </a>
+                            <a class="btn btn-default" href="{% static 'Temp_R_DEprojects/' %}{{ task_destination_folder }}/boxplot_beforenorm.png">
+                                <span class="glyphicon glyphicon-download"></span>
+                                Download static image (.png)
+                            </a>
+                        </div>
+                        <br><br>
+                        <div>
+                            <p class="text-center"><strong>Figure 2: </strong>Density plots of gene expression among samples
+                                <br>(before normalization, in TPM)</p>
+                        </div>
+                        <div class="text-center"><!--btn group pic-->
+                            <img src="{% static 'Temp_R_DEprojects/' %}{{ task_destination_folder }}/exp_density.png"
+                                class="img-thumbnail" alt="Cinque Terre" width="500px" height="400px">
+                            <br><br>
+                            <a class="btn btn-info" href="static/{{ task_destination_folder }}/exp_density.html;ht=400;wid=600">
+                                <span class="glyphicon glyphicon-file"></span>
+                                View interactive plot
+                            </a>
+                            <a class="btn btn-default" href="{% static 'Temp_R_DEprojects/' %}{{ task_destination_folder }}/exp_density.png">
+                                <span class="glyphicon glyphicon-download"></span>
+                                Download static image (.png)
+                            </a>
+                        </div>
+                        <br><br>
+                        <div>
+                            <p class="text-center"><strong>Figure 3: </strong>Correlation plot of expression among samples
+                                <br>(after normalization)</p>
+                        </div>
+                        <div class="text-center"><!--btn group pic-->
+                            <img src="{% static 'Temp_R_DEprojects/' %}{{ task_destination_folder }}/exp_correlation.png"
+                                class="img-thumbnail" alt="Cinque Terre" width="500px" height="500px">
+                            <br><br>
+                            <a class="btn btn-info" href="static/{{ task_destination_folder }}/exp_correlation.html;ht=600;wid=600">
+                                <span class="glyphicon glyphicon-file"></span>
+                                View interactive plot
+                            </a>
+                            <a class="btn btn-default" href="{% static 'Temp_R_DEprojects/' %}{{ task_destination_folder }}/exp_correlation.png">
+                                <span class="glyphicon glyphicon-download"></span>
+                                Download static image (.png)
+                            </a>
+                        </div>
+                        <br><br>
+                        <h3 class="text-left"><strong>2.2</strong> Principal Component Analysis</h3>
+                        <br>
+                        <div>
+                            <p class="text-center"><strong>Figure 4: </strong>PCA plot among samples
+                                <br>(eclipse omitted when sample number is not enough)</p>
+                        </div>
+                        <div class="text-center"><!--btn group pic-->
+                            <img src="{% static 'Temp_R_DEprojects/' %}{{ task_destination_folder }}/pca_samples.png"
+                                class="img-thumbnail" alt="Cinque Terre" width="700px" height="500px">
+                            <br><br>
+                            <a class="btn btn-info" href="static/{{ task_destination_folder }}/pca_samples.html;ht=400;wid=600">
+                                <span class="glyphicon glyphicon-file"></span>
+                                View interactive plot
+                            </a>
+                            <a class="btn btn-default" href="{% static 'Temp_R_DEprojects/' %}{{ task_destination_folder }}/pca_samples.png">
+                                <span class="glyphicon glyphicon-download"></span>
+                                Download static image (.png)
+                            </a>
+                        </div>
+                        <br><br>
+                        <h3 class="text-left"><strong>2.3</strong> Differential Analysis</h3>
+                        <br><br>
+                        <div>
+                            <p class="text-center"><strong>Figure 5: </strong>Volcano plot displaying differential expression status between groups
+                                <br>DOWN: Down Regulated, NS: Not Significant, UP: Up Regulated</p>
+                        </div>
+                        <div class="text-center"><!--btn group pic-->
+                            <img src="{% static 'Temp_R_DEprojects/' %}{{ task_destination_folder }}/volcano.png"
+                                class="img-thumbnail" alt="Cinque Terre" width="700px" height="500px">
+                            <br><br>
+                            <a class="btn btn-info" href="static/{{ task_destination_folder }}/volcano.html;ht=400;wid=600">
+                                <span class="glyphicon glyphicon-file"></span>
+                                View interactive plot
+                            </a>
+                            <a class="btn btn-default" href="{% static 'Temp_R_DEprojects/' %}{{ task_destination_folder }}/volcano.png">
+                                <span class="glyphicon glyphicon-download"></span>
+                                Download static image (.png)
+                            </a>
+                        </div>
+                        <br><br>
+                        <div>
+                            <p class="text-center"><strong>Figure 6: </strong>Heatmap of most differentially expressed genes
+                                <br>(TPM, log10 transformed)</p>
+                        </div>
+                        <div class="text-center">
+                            <img src="{% static 'Temp_R_DEprojects/' %}{{ task_destination_folder }}/topDE_heatmap.png"
+                                class="img-thumbnail" alt="Cinque Terre" width="800px">
+                            <br><br>
+                            <a class="btn btn-default" href="{% static 'Temp_R_DEprojects/' %}{{ task_destination_folder }}/topDE_heatmap.png">
+                                <span class="glyphicon glyphicon-download"></span>
+                                Download static image (.png)
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block javascript_block %}
+    <script>
+    function previewCSV(path_to_CSV){
+        Papa.parse(path_to_CSV, {
+            download: true,
+            complete: function(results) {
+                Heiho(results.data);
+            }
+        });
+    }
+    </script>
+{% endblock %}
