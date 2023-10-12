@@ -1,0 +1,179 @@
+---
+title: "Enrich"
+author: "Edward Zhu"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r}
+rm(list=ls())
+library(stringr)
+library(dplyr)
+library(clusterProfiler)
+library(tidyverse)
+library(reticulate)
+
+source_python("./filter_extra_GO_enrichment_lines.py")
+
+egg<-read.table("diamond_tf_.emapper.annotations",sep="\t",header=F, fill = T)
+# Remove blank lines
+egg[egg==""]<-NA
+
+colnames(egg) = c("query_name", "seed_ortholog", "evalue", "score",	"eggNOG_OGs",	"max_annot_lvl",	"COG_category",	"Description",	"Preferred_name",	"GOs",	"EC",	"KEGG_ko",	"KEGG_Pathway",	"KEGG_Module",	"KEGG_Reaction",	"KEGG_rclass",	"BRITE",	"KEGG_TC",	"CAZy",	"BiGG_Reaction",	"PFAMs")
+
+```
+
+### Step1 - GO enrichment
+
+```{r}
+gene_ids <- egg$query_name
+eggnog_lines_with_go <- egg$GOs!= ""
+eggnog_annoations_go <- str_split(egg[eggnog_lines_with_go,]$GOs, ",")
+gene_to_go <- data.frame(gene = rep(gene_ids[eggnog_lines_with_go],
+                                   times = sapply(eggnog_annoations_go, length)),
+                         term = unlist(eggnog_annoations_go))
+
+# Select head genes for downstream analysis
+gene_list<-gene_to_go$gene[1:200]
+term2gene<-gene_to_go[,c(2,1)]
+df<-enricher(gene=gene_list,
+             pvalueCutoff = 0.05,
+             pAdjustMethod = "BH",
+             TERM2GENE = term2gene)
+
+gene_df = as.data.frame(df@result)
+
+```
+
+```{r}
+# GO annotation
+# Remove lines without proper GO term annotation
+
+gene_df_GOannot = filter_extra_GOlines(
+  gene_df, 
+  go2term(gene_df$ID))
+colnames(gene_df_GOannot) = colnames(gene_df)
+
+
+
+# Add GO and ontology information to each GO entry (BP/CC, etc)
+# Sort to match go_term and ontology order (by ID)
+gene_df_GOannot_sorted = gene_df_GOannot[order(gene_df_GOannot$ID),]
+tmp_go_df = go2term(gene_df$ID)
+tmp_ont_df = go2ont(gene_df_GOannot$ID)
+gene_df_GOannot_sorted$GOterm = tmp_go_df$Term
+gene_df_GOannot_sorted$ontology = tmp_ont_df$Ontology
+
+# Sort to display most enriched GO terms
+gene_df_GOannot_final = gene_df_GOannot_sorted[order(gene_df_GOannot_sorted$p.adjust),]
+
+
+```
+
+```{r}
+# Prepare data used for plotting, separate different ontology annotations
+data_pltgoenrich = gene_df_GOannot_final[1:20,]
+data_pltgoenrich = data_pltgoenrich[order(data_pltgoenrich$ontology),]
+data_pltgoenrich$Count = as.numeric(data_pltgoenrich$Count)
+#data_pltgoenrich$GeneRatio = as.numeric(data_pltgoenrich$GeneRatio)
+
+plt_GO_enrich = ggplot(data_pltgoenrich,
+                       aes(x=GOterm,y=-log10(p.adjust))) +
+  geom_point(aes(color=ontology, size=Count)) +
+  coord_flip() +
+  labs(x="") +
+  facet_grid(ontology~., scale = 'free_y', space = 'free_y') +
+  theme_bw()
+
+plt_GO_enrich
+
+```
+```{r}
+plt_go_networkplot = goplot(df)
+
+plt_go_networkplot
+```
+
+### Step2 - KEGG enrich
+
+```{r}
+
+gene_ids <- egg$query_name
+
+eggnog_lines_with_ko <- egg$KEGG_ko!= ""
+eggnog_annoations_ko <- str_split(egg[eggnog_lines_with_ko,]$KEGG_ko, ",")
+gene_to_ko <- data.frame(gene = rep(gene_ids[eggnog_lines_with_ko],
+                                   times = sapply(eggnog_annoations_ko, length)),
+                         ko = unlist(eggnog_annoations_ko)) %>%
+  na.omit()
+
+gene_to_ko[,2]<-gsub("ko:","",gene_to_ko[,2])
+
+# Data Cleaning
+gene_to_ko_cleaned = gene_to_ko[which(gene_to_ko$ko != "-"),]
+ko_to_gene = gene_to_ko_cleaned[,c(2,1)]
+
+
+ko_pathway_name = read.table("./KEGG_pathway_ko_uniq.txt", header=T, sep="\t")
+ko_to_enzyme = ko_pathway_name %>%
+   dplyr::select(ko = ko, level3name = level3_pathway_name) %>%
+   na.omit()
+ko_to_pathway = ko_pathway_name %>%
+   dplyr::select(ko = ko, level2name = level2_pathway_name) %>%
+   na.omit()
+
+pathway_to_gene <- gene_to_ko %>% left_join(ko_to_enzyme, by = "ko") %>%
+  dplyr::select(pathway=level3name,gene=gene) %>%
+  na.omit()
+ 
+```
+
+```{r}
+# Select head genes for downstream analysis
+gene_list<-gene_to_ko_cleaned$gene[1:1000]
+
+df_enrich_kegg = enricher(gene=gene_list,
+             pvalueCutoff = 0.05,
+             pAdjustMethod = "BH",
+             TERM2GENE = pathway_to_gene,
+             # TERM2GENE = ko_to_gene,
+             # TERM2NAME = ko_to_pathway
+             )
+
+gene_df_kegg = as.data.frame(df_enrich_kegg@result)
+gene_df_kegg_cleaned = gene_df_kegg[!is.na(gene_df_kegg$Description),]
+
+# Sort to display most enriched GO terms
+#gene_df_kegg_final = gene_df_kegg_cleaned[rev(order(gene_df_kegg_cleaned$Count)),]
+gene_df_kegg_final = gene_df_kegg_cleaned[order(gene_df_kegg_cleaned$p.adjust),]
+```
+
+```{r}
+# Prepare enrichment plot data
+data_pltkeggenrich = gene_df_kegg_final[1:20,]
+data_pltkeggenrich$Count = as.numeric(data_pltkeggenrich$Count)
+#data_pltkeggenrich$GeneRatio = as.numeric(data_pltkeggenrich$GeneRatio)
+
+
+plt_KEGG_enrich = ggplot(data_pltkeggenrich,
+                       aes(x=Description,y=GeneRatio)) +
+  geom_point(aes(color=-log10(p.adjust), size=Count)) +
+  coord_flip() +
+  labs(x="") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+plt_KEGG_enrich
+```
+```{r}
+df_enrich_kegg_significant = filter(df_enrich_kegg,
+                                    pvalue<.05, qvalue<0.2)
+
+plt_kegg_dot = dotplot(df_enrich_kegg_significant,
+                       showCategory=20,
+                       color = "p.adjust") +
+  #scale_size(range=c(2,12)) +
+  scale_color_viridis_c(guide=guide_colorbar(reverse=TRUE))
+
+plt_kegg_dot
+```

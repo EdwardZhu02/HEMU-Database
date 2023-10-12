@@ -1,0 +1,190 @@
+---
+title: "enrich_new"
+author: "Edward Zhu"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r}
+rm(list=ls())
+library(stringr)
+library(dplyr)
+library(clusterProfiler)
+library(tidyverse)
+
+output_file_name = 123
+
+###
+######
+########## Preparation of background GO/KEGG annotation ############
+######
+###
+#background_gokegg_data = readxl::read_xlsx("./eggnog_result/zea.emapper.annotations.xlsx")
+background_gokegg_data = read.table("./eggnog_result/zea.emapper.annotations",sep="\t",header=F, fill = T)
+background_gokegg_data[background_gokegg_data==""]<-NA
+colnames(background_gokegg_data) = c("query_name", "seed_ortholog", "evalue", "score",	"eggNOG_OGs",	"max_annot_lvl",	"COG_category",	"Description",	"Preferred_name",	"GOs",	"EC",	"KEGG_ko",	"KEGG_Pathway",	"KEGG_Module",	"KEGG_Reaction",	"KEGG_rclass",	"BRITE",	"KEGG_TC",	"CAZy",	"BiGG_Reaction",	"PFAMs")
+
+background_gene_ids = background_gokegg_data$query_name
+eggnog_lines_with_go = background_gokegg_data$GOs!= ""
+eggnog_annoations_go = str_split(background_gokegg_data[eggnog_lines_with_go,]$GOs, ",")
+background_gene_to_go = data.frame(gene = rep(background_gene_ids[eggnog_lines_with_go],
+                                   times = sapply(eggnog_annoations_go, length)),
+                         term = unlist(eggnog_annoations_go))
+background_go_to_gene = background_gene_to_go[,c(2,1)]
+background_go_to_gene = background_go_to_gene[which(background_go_to_gene$term != "-"),]
+background_go_to_gene$gene<-gsub("transcript:","",background_go_to_gene$gene)
+###
+######
+########## Preparation of background GO/KEGG annotation ############
+######
+###
+raw_gokegg_data = read.csv2("./test_gokegg.csv", sep=",", header=T)
+gene_list = raw_gokegg_data$query_name
+
+# Perform GO enricher
+df_enrich_go<-enricher(gene=gene_list,
+             pvalueCutoff = 0.05,
+             pAdjustMethod = "BH",
+             TERM2GENE = background_go_to_gene)
+gene_df = as.data.frame(df_enrich_go@result)
+
+# Remove lines without proper GO term description
+go2term_ID = go2term(gene_df$ID)
+rownames(go2term_ID) = go2term_ID$go_id
+gene_df_filtered = gene_df[-which(!gene_df$ID %in% rownames(go2term_ID)),]
+gene_df_GOannot = gene_df_filtered[order(gene_df_filtered$ID),]
+
+# Add GO and ontology information to each GO entry (BP/CC, etc)
+# Sort to match go_term and ontology order (by ID)
+gene_df_GOannot_sorted = gene_df_GOannot[order(gene_df_GOannot$ID),]
+tmp_go_df = go2term(gene_df$ID)
+tmp_ont_df = go2ont(gene_df_GOannot$ID)
+gene_df_GOannot_sorted$GOterm = tmp_go_df$Term
+gene_df_GOannot_sorted$ontology = tmp_ont_df$Ontology
+
+# Sort to display most enriched GO terms
+gene_df_GOannot_final = gene_df_GOannot_sorted[order(gene_df_GOannot_sorted$p.adjust),]
+
+# Prepare data used for plotting, separate different ontology annotations
+data_pltgoenrich = filter(gene_df_GOannot_final,
+                                    p.adjust<0.05)
+data_pltgoenrich = data_pltgoenrich[1:20,]
+data_pltgoenrich = data_pltgoenrich[order(data_pltgoenrich$ontology),]
+data_pltgoenrich$Count = as.numeric(data_pltgoenrich$Count)
+#data_pltgoenrich$GeneRatio = as.numeric(data_pltgoenrich$GeneRatio)
+
+plt_GO_enrich = ggplot(data_pltgoenrich,
+                       aes(x=GOterm,y=-log10(p.adjust))) +
+  geom_point(aes(color=ontology, size=Count)) +
+  coord_flip() +
+  labs(x="") +
+  facet_grid(ontology~., scale = 'free_y', space = 'free_y') +
+  theme_bw()
+#plt_GO_enrich
+```
+
+KEGG enrichment
+
+```{r}
+###
+######
+########## Preparation of background GO/KEGG annotation ############
+######
+###
+#background_gene_ids = background_gokegg_data$query_name
+eggnog_lines_with_ko <- background_gokegg_data$KEGG_ko!= ""
+eggnog_annoations_ko <- str_split(background_gokegg_data[eggnog_lines_with_ko,]$KEGG_ko, ",")
+background_gene_to_ko <- data.frame(gene = rep(background_gene_ids[eggnog_lines_with_ko],
+                                   times = sapply(eggnog_annoations_ko, length)),
+                         ko = unlist(eggnog_annoations_ko)) %>%
+  na.omit()
+
+background_gene_to_ko[,2]<-gsub("ko:","",background_gene_to_ko[,2])
+
+# Data Cleaning
+gene_to_ko_cleaned = background_gene_to_ko[which(background_gene_to_ko$ko != "-"),]
+ko_to_gene = gene_to_ko_cleaned[,c(2,1)]
+ko_pathway_name = read.table("./KEGG_pathway_ko_uniq.txt", header=T, sep="\t")
+ko_to_enzyme = ko_pathway_name %>%
+   dplyr::select(ko = ko, level3name = level3_pathway_name) %>%
+   na.omit()
+ko_to_pathway = ko_pathway_name %>%
+   dplyr::select(ko = ko, level2name = level2_pathway_name) %>%
+   na.omit()
+pathway_to_gene <- background_gene_to_ko %>% left_join(ko_to_enzyme, by = "ko") %>%
+  dplyr::select(pathway=level3name,gene=gene) %>%
+  na.omit()
+pathway_to_gene$gene<-gsub("transcript:","",pathway_to_gene$gene)
+###
+######
+########## Preparation of background GO/KEGG annotation ############
+######
+###
+
+# Select genes for downstream analysis
+#gene_list = raw_gokegg_data$query_name
+
+df_enrich_kegg = enricher(gene=gene_list,
+             pvalueCutoff = 0.05,
+             pAdjustMethod = "BH",
+             TERM2GENE = pathway_to_gene,
+             # TERM2GENE = ko_to_gene,
+             # TERM2NAME = ko_to_pathway
+             )
+
+#plt_KEGG_enrich
+df_enrich_kegg_result = df_enrich_kegg@result
+
+df_enrich_kegg_result$Gene_Ratio = 0
+
+for (i in 1:nrow(df_enrich_kegg_result)){
+  tmp_linesplit = unlist(strsplit(df_enrich_kegg_result[i,3], "/")) # GeneRatio
+  df_enrich_kegg_result[i,ncol(df_enrich_kegg_result)] = as.numeric(tmp_linesplit[1]) / as.numeric(tmp_linesplit[2])
+}
+
+plt_KEGG_enrich = ggplot(df_enrich_kegg_result,
+                       aes(x=Description,y=Gene_Ratio)) +
+  geom_point(aes(color=-log10(p.adjust), size=Count)) +
+  coord_flip() +
+  labs(x="") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+# df_enrich_kegg_significant = filter(df_enrich_kegg,
+#                                     p.adjust<0.05)
+# plt_KEGG_dot = dotplot(df_enrich_kegg,
+#                        showCategory=20,
+#                        color = "p.adjust")
+#plt_KEGG_dot
+
+
+ggsave(paste0("Mainapp/static/Temp_R_gokegg/", output_file_name, "_GOenrichment.png"), 
+           plot=plt_GO_enrich, dpi = 400, width=5, height=10)
+output_go_enrichment = plotly::ggplotly(plt_GO_enrich)
+htmlwidgets::saveWidget(output_go_enrichment, 
+                        paste0("Mainapp/static/Temp_R_gokegg/", output_file_name, "_GOenrichment.html"),
+                        selfcontained = TRUE)
+
+ggsave(paste0("Mainapp/static/Temp_R_gokegg/", output_file_name, "_KEGGenrichment.png"),
+           plot=plt_KEGG_enrich, dpi = 400, width=5, height=10)
+output_kegg_enrichment = plotly::ggplotly(plt_KEGG_enrich)
+htmlwidgets::saveWidget(output_kegg_enrichment,
+                        paste0("Mainapp/static/Temp_R_gokegg/", output_file_name, "_KEGGenrichment.html"),
+                        selfcontained = TRUE)
+
+
+df_enrich_go_significant = filter(df_enrich_go,
+                                    pvalue<0.05)
+plt_GO_cnet = cnetplot(df_enrich_go,categorySize="p.adjust")
+ggsave(paste0("Mainapp/static/Temp_R_gokegg/", output_file_name, "_GOcnet.png"),
+           plot=plt_GO_cnet, dpi = 200, width=10, height=10)
+
+
+```
+
+```{r}
+
+
+```
+
+

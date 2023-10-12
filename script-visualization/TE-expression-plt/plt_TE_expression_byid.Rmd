@@ -1,0 +1,88 @@
+---
+title: "plt_TE_expression_byid"
+author: "Edward Zhu"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r}
+rm(list=ls())
+
+library(tidyverse)
+library(plotly)
+
+te_raw_data = read.csv2("./TE_00003067_TEexpr.csv", sep=",", header = T)
+#te_raw_data$sample_tissue = c(rep('tissue1', 200), rep('tissue2', 300), rep('tissue3', 637))
+
+te_raw_data$fpkm = as.numeric(te_raw_data$fpkm)
+
+te_raw_data$tpm = as.numeric(te_raw_data$fpkm) # plot using FPKM, so discard TPM here.
+
+te_raw_data$sample_tissue = as.factor(te_raw_data$sample_tissue)
+```
+
+```{r}
+mean_tpm = mean(te_raw_data$tpm)
+max_tpm = max(te_raw_data$tpm)
+sample_number = nrow(te_raw_data)
+  
+plt_sample = ggplot(data=te_raw_data) +
+  
+  geom_hline(yintercept = 1, color="gray", linetype = "dotted", size=0.1) +
+  geom_hline(yintercept = 2, color="gray", size=0.1) +
+  geom_hline(yintercept = 3, color="gray", linetype = "dotted", size=0.1) +
+  geom_hline(yintercept = 4, color="gray", size=0.1) +
+  geom_hline(yintercept = 5, color="gray", linetype = "dotted", size=0.1) +
+  
+  # geom_hline(yintercept = 50, color="gray", linetype = "dotted", size=0.1) +
+  # geom_hline(yintercept = 100, color="gray", size=0.1) +
+  # geom_hline(yintercept = 150, color="gray", linetype = "dotted", size=0.1) +
+  # geom_hline(yintercept = 200, color="gray", size=0.1) +
+  # geom_hline(yintercept = 250, color="gray", linetype = "dotted", size=0.1) +
+  #geom_hline(yintercept = 6000, color="gray", size=0.2) +
+  
+  geom_segment(aes(x=sample_id, xend=sample_id, y=0, yend=tpm), color="#3366CC", alpha=0.4, size=0.8) +
+  geom_point(aes(x=sample_id, y=tpm), color="#66CCCC", size=0.1) +
+  geom_hline(yintercept = mean_tpm, color="red", linetype = "dashed", size=0.5) +
+  geom_hline(yintercept = max_tpm, color="red", linetype = "dashed", size=0.5) +
+
+  
+  geom_text(aes(x=sample_number*2/3, y=mean_tpm*1.5), 
+            label=paste0("Mean FPKM: ", round(mean_tpm,2))) +
+  geom_text(aes(x=sample_number*2/3, y=max_tpm*0.9), 
+            label=paste0("Max FPKM: ", round(max_tpm,2))) +
+  theme_bw() +
+  theme(
+      panel.grid = element_blank(),
+      panel.border = element_blank(),
+      axis.line = element_line(colour = 'black'),
+      axis.text.x = element_blank(),
+      axis.ticks.x = element_blank(),
+      axis.text.y = element_text(size = 10, hjust = 1),
+      legend.position = 'none'
+  ) +
+  labs( x=paste0("samples (n=", sample_number, ")"), y="FPKM")
+
+#ggplotly(plt_sample)
+ggsave(plt_sample, file="plt_sample-TE_00003067.pdf", width=5, height=5)
+print(plt_sample)
+```
+
+```{r}
+plt_tissue = ggplot(data = te_raw_data, mapping = aes(x=sample_tissue, y=tpm)) + 
+  geom_boxplot(alpha=0.5, fill="gray", outlier.fill="gray", outlier.size=0.3) +
+  geom_jitter(color="#66CCCC", alpha=0.2, size=0.5, width=0.1) +
+  theme_bw() +
+  scale_fill_brewer() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    legend.position="none",
+    panel.border = element_blank(),
+  ) +
+  labs(x = "Tissue types", y = "FPKM")
+
+#ggplotly(plt_tissue)
+ggsave(plt_tissue, file="plt_tissue-TE_00003067.pdf", width=5, height=5)
+print(plt_tissue)
+```
+

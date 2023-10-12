@@ -1,0 +1,40 @@
+---
+title: "format_eggannot"
+author: "Edward Zhu"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r}
+rm(list=ls())
+library(dplyr)
+
+# Load original tab-deliminated eggnog annotation
+eggnog_result_raw<-read.table("./eggnog_result/zea.emapper.annotations",sep="\t",header=F, fill = T)
+
+# Remove blank lines
+eggnog_result_raw[eggnog_result_raw == ""] = NA
+
+colnames(eggnog_result_raw) = c("query_name", "seed_ortholog", "evalue", "score",	"eggNOG_OGs",	"max_annot_lvl",	"COG_category",	"Description",	"Preferred_name",	"GOs",	"EC",	"KEGG_ko",	"KEGG_Pathway",	"KEGG_Module",	"KEGG_Reaction",	"KEGG_rclass",	"BRITE",	"KEGG_TC",	"CAZy",	"BiGG_Reaction",	"PFAMs")
+```
+
+```{r}
+# Replace heading 'transcript:' mark to none
+eggnog_result_raw$query_name = gsub("transcript:", "", eggnog_result_raw$query_name)
+eggnog_result_raw$KEGG_ko = gsub("ko:", "", eggnog_result_raw$KEGG_ko)
+
+# Remove spaces, for MySQL writing tasks
+# eggnog_result_raw$Description = gsub(" ", "_", eggnog_result_raw$Description)
+
+eggnog_csv_final = eggnog_result_raw %>%
+  select(query_name = query_name, Description = Description, 
+         GOs = GOs, KEGG_ko = KEGG_ko, KEGG_Pathway = KEGG_Pathway,)
+
+# Remove long descriptions, for MySQL writing tasks
+eggnog_csv_final$Description = substr(eggnog_csv_final$Description, 1, 200)
+```
+
+```{r}
+write.table(eggnog_csv_final, file="./zea_eggnog_final.csv", sep=",")
+```
+
