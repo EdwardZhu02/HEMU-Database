@@ -1,4 +1,4 @@
-# The HEMU Andropogoneae Database and Analysis Platform
+# The HEMU database and analysis platform for Andropogoneae grasses
 
 ## 1 Project Introduction
 
