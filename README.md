@@ -2,7 +2,7 @@
 
 ## 1 Project Introduction
 
-HEMU is an easy-to-handle, graphical based database and analysis platform for Androposoneae grasses which enables user to discover genomic data from multiple representative Andropogoneae species within a click.
+HEMU is an easy-to-handle, graphical based database and analysis platform for Andropogoneae grasses which enables user to discover genomic data from multiple representative Andropogoneae species within a click.
 
 The name "HEMU" draws its inspiration from the Chinese classic, the Book of Songs, symbolizing robust crops and bountiful harvests. HEMU encompasses massive multi-omics data and is equipped with six sophisticated analysis toolkits, which enables easy utilization of the bioinformatics data and customized performance of comparative analysis from novel perspectives among Andropogoneae species.
 
