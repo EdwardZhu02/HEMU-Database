@@ -1,7 +1,5 @@
 """
-这是最终生成大表达量矩阵的脚本文件。
-目标物种为薏苡（Coix lacryma）.
-使用方法
+Usage example:
 python Expression_Database_Generator [./directory_of_tab_storage] [./directory/Output.csv]
 """
 
