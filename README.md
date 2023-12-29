@@ -9,7 +9,7 @@ The name "HEMU" draws its inspiration from the Chinese classic, the Book of Song
 The project is currently deployed and available for open research use [HERE](https://shijunpenglab.com/HEMUdb/).  
 
 **To cite this project**:
-Zhu, Y., Wang, Z., Zhou, Z., Liu, Y., Gao, X., Guo, W., & Shi, J. (2023). HEMU: an integrated comparative genomics database and analysis platform for Andropogoneae grasses. Plant Communications, 100786. https://doi.org/https://doi.org/10.1016/j.xplc.2023.100786 
+Zhu, Y., Wang, Z., Zhou, Z., Liu, Y., Gao, X., Guo, W., & Shi, J. (2023). HEMU: an integrated comparative genomics database and analysis platform for Andropogoneae grasses. Plant Communications, 100786. https://doi.org/10.1016/j.xplc.2023.100786 
 
 
 ## 2 Deploying the Main HEMU Framework
